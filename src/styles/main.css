@@ -1,0 +1,112 @@
+body {
+margin: 0;
+font-family: Arial;
+background: #fff5f7;
+}
+
+
+.header {
+background: #f6c1cc;
+padding: 15px;
+display: flex;
+justify-content: space-between;
+}
+
+
+.header a {
+margin: 0 10px;
+text-decoration: none;
+color: #333;
+}
+
+
+.container {
+padding: 30px;
+}
+
+
+.grid {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+gap: 20px;
+}
+
+
+.card {
+background: #fff;
+padding: 15px;
+border-radius: 8px;
+}
+
+
+.card img {
+width: 100%;
+border-radius: 8px;
+}
+.home {
+  padding: 40px;
+}
+
+.home-hero {
+  text-align: center;
+  padding: 60px 20px;
+  background: #f7f7f7;
+  border-radius: 8px;
+}
+
+.home-hero h1 {
+  font-size: 42px;
+  margin-bottom: 10px;
+}
+
+.home-hero p {
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+
+.btn-primary {
+  display: inline-block;
+  padding: 10px 20px;
+  background: #2f855a;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 5px;
+}
+
+.home-intro {
+  margin: 40px 0;
+  text-align: center;
+}
+
+.home-features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.feature-card {
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 6px;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+/* ABOUT */
+.about {
+  padding: 40px;
+  max-width: 900px;
+  margin: auto;
+}
+
+.about h1 {
+  margin-bottom: 20px;
+}
+
+.about h2 {
+  margin-top: 30px;
+}
+
+.about ul {
+  padding-left: 20px;
+}

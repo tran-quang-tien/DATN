@@ -1,0 +1,117 @@
+/* Container bao phủ toàn màn hình */
+.register-wrapper {
+  background: linear-gradient(135deg, #fff5f7 0%, #ffdeeb 100%);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* Cửa sổ đăng ký */
+.register-card {
+  width: 100%;
+  max-width: 550px;
+  padding: 40px;
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 15px 35px rgba(255, 118, 117, 0.15);
+  border: 1px solid #ffdae9;
+}
+
+.register-card h2 {
+  color: #ff7675;
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+/* Layout chia cột */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.full-column {
+  grid-column: span 2;
+}
+
+/* Định dạng từng ô nhập liệu */
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: relative;
+}
+
+.input-group label {
+  font-weight: 600;
+  color: #636e72;
+  font-size: 14px;
+  margin-left: 5px;
+}
+
+.input-group input {
+  padding: 12px 15px;
+  border-radius: 12px;
+  border: 2px solid #f1f2f6;
+  background: #f9f9f9;
+  transition: all 0.3s ease;
+  font-size: 15px;
+}
+
+.input-group input:focus {
+  outline: none;
+  border-color: #ff7675;
+  background: #fff;
+  box-shadow: 0 0 8px rgba(255, 118, 117, 0.1);
+}
+
+/* Icon ẩn/hiện mật khẩu */
+.toggle-password {
+  position: absolute;
+  right: 15px;
+  top: 38px;
+  cursor: pointer;
+  font-size: 18px;
+  color: #b2bec3;
+}
+
+/* Nút bấm */
+.btn-register-submit {
+  width: 100%;
+  margin-top: 30px;
+  padding: 15px;
+  border-radius: 30px;
+  border: none;
+  background: #ff7675;
+  color: #fff;
+  font-size: 17px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn-register-submit:hover {
+  background: #d81b60;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(216, 27, 96, 0.3);
+}
+
+.btn-register-submit:disabled {
+  background: #fab1a0;
+  cursor: not-allowed;
+}
+
+/* Responsive cho điện thoại */
+@media (max-width: 500px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+  .full-column {
+    grid-column: span 1;
+  }
+}

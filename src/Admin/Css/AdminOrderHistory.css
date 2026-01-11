@@ -1,0 +1,137 @@
+.filter-container-sakura {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+    padding: 15px 20px;
+    border-radius: 12px;
+    margin-bottom: 25px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+}
+
+.filter-tabs {
+    display: flex;
+    gap: 10px;
+}
+
+.filter-tabs button {
+    padding: 8px 18px;
+    border: 1px solid #fce4ec;
+    background: white;
+    border-radius: 8px;
+    color: #888;
+    cursor: pointer;
+    transition: 0.3s;
+    font-weight: 500;
+}
+
+.filter-tabs button.tab-active {
+    background: #e91e63;
+    color: white;
+    border-color: #e91e63;
+    box-shadow: 0 4px 10px rgba(233, 30, 99, 0.2);
+}
+
+.filter-dates {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.date-input-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.date-input-group label {
+    font-size: 13px;
+    color: #666;
+}
+
+.date-input-group input {
+    padding: 6px 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    outline: none;
+}
+
+.btn-clear-date {
+    background: #eee;
+    border: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    cursor: pointer;
+    color: #666;
+}
+
+.order-type-tag {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.type-online { background: #e3f2fd; color: #1976d2; }
+.type-offline { background: #e8f5e9; color: #388e3c; }
+
+.status-pill {
+    background: #fff3e0;
+    color: #ef6c00;
+    padding: 5px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+}
+.status-pill {
+    padding: 6px 14px;
+    border-radius: 50px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    display: inline-block;
+}
+
+/* Màu trạng thái */
+.status-pending { background: #fff8e1; color: #ff8f00; border: 1px solid #ffe082; } /* Vàng cam - Chờ */
+.status-shipping { background: #e3f2fd; color: #1565c0; border: 1px solid #bbdefb; } /* Xanh biển - Đang giao */
+.status-success { background: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; }  /* Xanh lá - Xong */
+.status-cancel { background: #ffebee; color: #c62828; border: 1px solid #ffcdd2; }   /* Đỏ - Hủy */
+
+.order-type-tag {
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+}
+.type-online { background: #f3e5f5; color: #7b1fa2; }
+.type-offline { background: #f1f8e9; color: #558b2f; }
+.filter-container-sakura {
+    display: flex; justify-content: space-between; align-items: center;
+    background: white; padding: 15px 20px; border-radius: 12px;
+    margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+}
+.filter-tabs button {
+    padding: 8px 18px; border: 1px solid #fce4ec; background: white;
+    border-radius: 8px; color: #888; cursor: pointer; margin-right: 8px;
+}
+.filter-tabs button.tab-active { background: #e91e63; color: white; border-color: #e91e63; }
+.filter-dates { display: flex; align-items: center; gap: 10px; font-size: 14px; }
+.filter-dates input { padding: 6px; border-radius: 6px; border: 1px solid #ddd; }
+
+.status-pill { padding: 4px 12px; border-radius: 20px; font-size: 11px; background: #fff3e0; color: #ef6c00; font-weight: bold; }
+.order-type-tag { padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: bold; }
+.type-online { background: #e3f2fd; color: #1976d2; }
+.type-offline { background: #f1f8e9; color: #558b2f; }
+
+/* Modal */
+.modal-overlay {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 1000;
+}
+.modal-window {
+    background: white; padding: 30px; border-radius: 15px; width: 600px;
+    max-height: 85vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+.modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; margin-bottom: 20px; }
+.btn-x { border: none; background: none; font-size: 24px; cursor: pointer; color: #888; }

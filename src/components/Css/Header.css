@@ -1,0 +1,206 @@
+.sakura-header {
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(10px);
+    border-bottom: 2px solid #ffeff2;
+    position: sticky;
+    top: 0;
+    z-index: 2000;
+    height: 80px;
+    display: flex;
+    align-items: center;
+}
+
+/* GIỚI HẠN CHIỀU RỘNG HEADER */
+.header-inner-container {
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* LOGO */
+.sakura-logo {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #ff4081;
+    cursor: pointer;
+    white-space: nowrap;
+}
+.sakura-logo span { color: #333; }
+
+/* NAVIGATION */
+.sakura-nav {
+    display: flex;
+    gap: 30px;
+}
+.sakura-nav a {
+    text-decoration: none;
+    color: #444;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: 0.3s;
+}
+.sakura-nav a:hover { color: #ff4081; }
+
+/* ACTIONS & SEARCH */
+.sakura-actions {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+}
+
+.search-bar {
+    display: flex;
+    background: #f5f5f5;
+    border-radius: 20px;
+    padding: 5px 15px;
+    border: 1px solid transparent;
+}
+.search-bar:focus-within {
+    border-color: #ffc1cf;
+    background: #fff;
+}
+.search-bar input {
+    border: none;
+    background: transparent;
+    outline: none;
+    padding: 5px;
+    width: 150px;
+}
+.search-bar button {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+}
+
+/* USER SECTION */
+.user-dropdown-wrapper {
+    position: relative;
+}
+
+.user-trigger {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 5px 10px;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: 0.25s;
+}
+.user-trigger:hover {
+    background: #fff0f3;
+}
+
+.nav-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #ff4081;
+}
+
+.user-name {
+    font-weight: 600;
+    color: #333;
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.arrow {
+    font-size: 0.7rem;
+    color: #777;
+}
+
+/* DROPDOWN MENU */
+.dropdown-menu {
+    position: absolute;
+    top: 120%;
+    right: 0;
+    width: 240px;
+    background: white;
+    border-radius: 14px;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+    list-style: none;
+    padding: 10px;
+    border: 1px solid #ffeff2;
+
+    /* ẨN MẶC ĐỊNH */
+    opacity: 0;
+    transform: translateY(10px);
+    pointer-events: none;
+    transition: 0.25s ease;
+    z-index: 999;
+}
+
+/* HIỆN KHI CLICK */
+.user-dropdown-wrapper.active .dropdown-menu {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+/* DROPDOWN CONTENT */
+.dropdown-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+}
+.dropdown-info img {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+}
+.dropdown-info p {
+    font-size: 0.8rem;
+    color: #888;
+}
+
+.dropdown-menu hr {
+    border: none;
+    height: 1px;
+    background: #ffeff2;
+    margin: 6px 0;
+}
+
+.dropdown-menu button {
+    width: 100%;
+    text-align: left;
+    padding: 10px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 0.9rem;
+    border-radius: 8px;
+    transition: 0.2s;
+}
+.dropdown-menu button:hover {
+    background: #fff0f3;
+    color: #ff4081;
+}
+
+.logout-item {
+    color: #d32f2f !important;
+}
+
+/* BUTTON LOGIN */
+.btn-login-sakura {
+    background: #ff4081;
+    color: white;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 25px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+.btn-login-sakura:hover {
+    background: #d81b60;
+    box-shadow: 0 5px 15px rgba(255, 64, 129, 0.4);
+}

@@ -1,0 +1,89 @@
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 15px;
+}
+
+.btn-takeaway {
+  position: relative;
+  background: #ff9800;
+  color: white;
+  border: none;
+  padding: 15px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.pos-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: #ff5252;
+  color: white;
+  font-size: 12px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  border: 2px solid white;
+}
+
+.btn-table-confirm {
+  background: #4caf50;
+  color: white;
+  border: none;
+  padding: 15px;
+  border-radius: 8px;
+  font-weight: bold;
+}
+.pos-container { display: flex; height: 100vh; background: #f0f2f5; font-family: 'Inter', sans-serif; }
+
+/* Bên trái */
+.pos-left { flex: 7; padding: 20px; display: flex; flex-direction: column; overflow: hidden; }
+.pos-nav { display: flex; justify-content: space-between; margin-bottom: 20px; }
+.tab-btn { padding: 10px 20px; border: none; background: #fff; margin-right: 10px; border-radius: 8px; cursor: pointer; font-weight: 600; }
+.tab-btn.active { background: #e84393; color: #fff; }
+.btn-alert { background: #ff4757; color: white; border: none; padding: 10px 15px; border-radius: 8px; position: relative; font-weight: bold; cursor: pointer; }
+.badge { position: absolute; top: -10px; right: -5px; background: #2f3542; color: white; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; border: 2px solid #fff; }
+
+.pos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; overflow-y: auto; }
+.pos-card { background: #fff; border-radius: 12px; overflow: hidden; cursor: pointer; transition: 0.2s; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+.pos-card:hover { transform: scale(1.03); }
+.pos-img img { width: 100%; height: 110px; object-fit: cover; }
+.pos-info { padding: 10px; text-align: center; }
+.pos-info .name { font-weight: bold; font-size: 14px; margin: 0; }
+.pos-info .price { color: #d63031; font-weight: 700; font-size: 13px; }
+
+/* Bên phải */
+.pos-right { flex: 3; background: #fff; border-left: 1px solid #ddd; display: flex; flex-direction: column; padding: 20px; }
+.order-header { display: flex; justify-content: space-between; border-bottom: 2px solid #f0f2f5; padding-bottom: 15px; }
+.btn-clear { background: #f1f2f6; border: none; color: #ff4757; padding: 5px 10px; border-radius: 5px; cursor: pointer; }
+.order-list { flex: 1; overflow-y: auto; padding: 15px 0; }
+.order-item { display: flex; justify-content: space-between; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px dashed #f0f2f5; }
+.item-name { display: block; font-weight: 500; font-size: 14px; }
+.item-qty { font-size: 12px; color: #747d8c; }
+.btn-del { border: none; background: #ffeae6; color: #ff4757; border-radius: 4px; padding: 2px 8px; margin-left: 10px; cursor: pointer; }
+.order-footer { border-top: 2px solid #f0f2f5; padding-top: 15px; }
+.total-row { display: flex; justify-content: space-between; font-size: 20px; font-weight: 800; margin-bottom: 15px; }
+.total-val { color: #d63031; }
+.pos-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.btn-table { padding: 12px; border: 1px solid #2ecc71; color: #2ecc71; background: #fff; border-radius: 8px; font-weight: bold; }
+.btn-pay { padding: 12px; background: #e84393; color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer; }
+/* Nút tăng giảm số lượng */
+.qty-controls { display: flex; align-items: center; gap: 10px; margin-top: 5px; }
+.qty-controls button { width: 25px; height: 25px; border-radius: 50%; border: 1px solid #ddd; background: #fff; cursor: pointer; }
+.qty-controls button:hover { background: #f0f0f0; }
+
+/* Nút thùng rác xóa món */
+.item-price-del { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; }
+.btn-del-trash { background: none; border: none; cursor: pointer; font-size: 16px; color: #ff4757; }
+.btn-del-trash:hover { transform: scale(1.2); }
+
+/* Chỉnh lại giao diện danh mục */
+.tabs { display: flex; gap: 8px; flex-wrap: wrap; max-width: 80%; }
+.tab-btn { white-space: nowrap; padding: 8px 15px; }

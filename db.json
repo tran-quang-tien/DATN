@@ -1,0 +1,19 @@
+{
+  "categories": [
+    { "id": 1, "name": "Cà phê" },
+    { "id": 2, "name": "Trà Nhật" },
+    { "id": 3, "name": "Bánh ngọt" }
+  ],
+  "products": [
+    {
+      "id": 1,
+      "name": "Matcha Latte",
+      "price": 45000,
+      "image": "https://i.imgur.com/0KFBHTB.jpg",
+      "description": "Matcha Nhật Bản nguyên chất",
+      "categoryId": 2
+    }
+  ],
+  "bookings": [],
+  "contacts": []
+}

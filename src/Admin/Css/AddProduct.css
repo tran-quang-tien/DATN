@@ -1,0 +1,106 @@
+/* Sử dụng các class của bạn */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.modal {
+  background: #fff;
+  width: 450px; /* Tăng nhẹ độ rộng để thoải mái hơn */
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+}
+
+.modal h3 {
+  margin-bottom: 20px;
+  color: #333;
+  text-align: center;
+}
+
+.modal label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 5px;
+  color: #666;
+}
+
+.modal input,
+.modal select,
+.modal textarea {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 0.95rem;
+  box-sizing: border-box; /* Quan trọng để không bị tràn chiều rộng */
+}
+
+.modal input:focus {
+  border-color: #ff6b81;
+  outline: none;
+}
+
+.modal textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+/* Hiển thị ảnh */
+.preview-img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-bottom: 12px;
+  border: 1px solid #eee;
+}
+
+/* Chỗ trống khi chưa có ảnh */
+.placeholder-img {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f9f9f9;
+  color: #aaa;
+  font-style: italic;
+  border: 2px dashed #ddd;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+/* Giữ nguyên các nút của bạn */
+.btn-primary {
+  background: #ff6b81;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.btn-danger {
+  background: #f3f4f6; /* Đổi màu nút hủy sang xám nhạt cho nhẹ nhàng */
+  color: #4b5563;
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.btn-primary:hover { opacity: 0.9; }
+.btn-danger:hover { background: #e5e7eb; }

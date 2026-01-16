@@ -102,6 +102,8 @@ function AccountManagement() {
           <Link to="/admin/products" className="nav-item">📦 Thực đơn</Link>
           <Link to="/admin/accounts" className="nav-item active">👥 Tài khoản</Link>
           <Link to="/admin/bookings" className="nav-item">📅 Đặt bàn</Link>
+          <Link to="/admin/revenue" className="nav-item">💰 Doanh số</Link>
+          <Link to="/admin/purchases" className="nav-item">🚚 Nhập kho</Link>
           <Link to="/admin/orders" className="nav-item">📊 Lịch sử đơn</Link>
           <div className="nav-divider"></div>
           <Link to="/Home" className="nav-item">🏠 Trang chủ</Link>
@@ -112,7 +114,7 @@ function AccountManagement() {
         <header className="main-header">
           <div className="header-left">
             <h1>Quản lý người dùng</h1>
-            <p>Bấm vào hàng để xem thông tin chi tiết</p>
+            <p>Bấm vào người dùng để xem thông tin chi tiết</p>
           </div>
           <div className="search-wrapper">
             <input 

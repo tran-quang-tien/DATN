@@ -1,5 +1,5 @@
 const API_URL = "http://localhost:3003/api";
-
+import axios from 'axios';
 // Hàm bổ trợ để dọn dẹp ID (tránh lỗi dính dấu : hoặc ký tự lạ)
 const cleanId = (id) => {
   if (!id) return "";
@@ -191,5 +191,79 @@ export const updateBookingStatus = async (bookingId, status, reason = "") => {
 export const deleteBooking = async (bookingId) => {
   const res = await fetch(`${API_URL}/bookings/${bookingId}`, { method: "DELETE" });
   if (!res.ok) throw new Error("Xóa đơn thất bại");
+  return res.json();
+};
+// --- 5. QUẢN LÝ NHẬP KHO (STAFF) ---
+
+export const getIngredients = async () => {
+  const res = await fetch(`${API_URL}/staff/ingredients`);
+  if (!res.ok) throw new Error("Lỗi tải danh sách nguyên liệu");
+  return res.json();
+};
+
+export const createPurchaseOrder = async (orderData) => {
+  const res = await fetch(`${API_URL}/staff/purchase-orders`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(orderData),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || "Lỗi nhập kho");
+  return data;
+};
+
+export const getPurchaseHistory = async () => {
+  const res = await fetch(`${API_URL}/staff/purchase-orders`);
+  if (!res.ok) throw new Error("Lỗi tải lịch sử nhập hàng");
+  return res.json();
+};
+// 1. Lấy danh sách nguyên liệu
+export const getStaffIngredients = async () => {
+    const res = await axios.get(`${API_URL}/staff/ingredients`);
+    return res.data;
+};
+
+// 2. Nút "Lưu dữ liệu" trong Modal (Thêm món mới)
+
+export const addIngredient = async (data) => {
+    const res = await axios.post(`${API_URL}/ingredients`, data);
+    return res.data;
+};
+
+// 3. Nút Cập nhật giá gốc
+export const updateIngredientPrice = async (id, price) => {
+    const res = await axios.put(`${API_URL}/ingredients/${id}/price`, { import_price: price });
+    return res.data;
+};
+
+// 4. Nút "HOÀN THÀNH" (Lưu phiếu nhập)
+export const createStaffPurchaseOrder = async (payload) => {
+    const res = await axios.post(`${API_URL}/staff/purchase-orders`, payload);
+    return res.data;
+};
+// --- . QUẢN LÝ TIN NHẮN (CHAT) ---
+
+// Gửi tin nhắn mới (Dùng cho cả Khách và Nhân viên)
+export const sendMessageApi = async (formData) => {
+  // formData phải chứa: user_id, customer_name, customer_phone, sender_type, message_text, và file 'image'
+  const res = await fetch(`${API_URL}/messages/send`, {
+    method: "POST",
+    body: formData, // Không để Content-Type là application/json vì dùng FormData
+  });
+  if (!res.ok) throw new Error("Gửi tin nhắn thất bại");
+  return res.json();
+};
+
+// Lấy lịch sử chat dựa trên số điện thoại khách hàng
+export const getChatHistoryApi = async (phone) => {
+  const res = await fetch(`${API_URL}/messages/history/${phone}`);
+  if (!res.ok) throw new Error("Lỗi tải lịch sử tin nhắn");
+  return res.json();
+};
+
+// Lấy danh sách tất cả khách hàng đã nhắn tin (Dùng cho Staff Sidebar)
+export const getChatCustomersApi = async () => {
+  const res = await fetch(`${API_URL}/messages/customers`);
+  if (!res.ok) throw new Error("Lỗi tải danh sách khách hàng chat");
   return res.json();
 };

@@ -66,14 +66,15 @@ export default function Header() {
           <Link to="/Home">Trang chủ</Link>
           <Link to="/menu">Cửa hàng</Link>
           <Link to="/booking">Đặt bàn</Link>
+          <Link to="/tuyen-dung">Tuyển dụng</Link>
           <Link to="/contact">Liên hệ</Link>
         </nav>
 
         <div className="sakura-actions">
-          <div className="search-bar">
+          {/* <div className="search-bar">
             <input type="text" placeholder="Tìm kiếm món ăn..." />
             <button>🔍</button>
-          </div>
+          </div> */} 
 
           <div className="sakura-user-section">
             {!currentUser ? (

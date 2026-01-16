@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { getProducts, deleteProduct } from "../api/Api";
 import "./Css/ProductManagement.css";
-import axios from "axios"; // Thêm dòng này
+import axios from "axios"; 
 
 function ProductManagement() {
   const [products, setProducts] = useState([]);
@@ -95,7 +95,10 @@ function ProductManagement() {
           <Link to="/admin/products" className="nav-item active">📦 Thực đơn</Link>
           <Link to="/admin/accounts" className="nav-item">👥 Tài khoản</Link>
           <Link to="/admin/bookings" className="nav-item">📅 Đặt bàn</Link>
+       
           <Link to="/admin/orders" className="nav-item active">📊 Lịch sử đơn</Link>
+          <Link to="/admin/purchases" className="nav-item">🚚 Nhập kho</Link>
+             <Link to="/admin/revenue" className="nav-item">💰 Doanh số</Link>
           <div className="nav-divider"></div>
           <Link to="/Home" className="nav-item">🏠 Trang chủ</Link>
         </nav>

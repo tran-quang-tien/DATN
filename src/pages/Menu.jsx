@@ -10,6 +10,7 @@ export default function Menu() {
   const [totalItems, setTotalItems] = useState(0);
   const navigate = useNavigate();
   const sectionRefs = useRef({});
+  const contentRef = useRef(null);
 
   const getUser = () => {
     return JSON.parse(sessionStorage.getItem("user_session"));
@@ -52,7 +53,7 @@ export default function Menu() {
 
   return (
     <div className="sakura-modern-page">
-      {/* THANH TRẠNG THÁI */}
+      {/* 1. THANH TRẠNG THÁI CỐ ĐỊNH */}
       <div className="order-status-fixed-container">
         <div className="order-status-bar">
           <div className="status-content">
@@ -63,7 +64,7 @@ export default function Menu() {
                 className="order-count-pill"
                 onClick={() => navigate("/cart")}
               >
-                Tổng số món đang đặt: <strong>{totalItems}</strong>
+                Tổng số món bạn đang đặt: <strong>{totalItems}</strong>
               </button>
             ) : (
               <button
@@ -77,7 +78,9 @@ export default function Menu() {
         </div>
       </div>
 
+      {/* 2. LAYOUT CHÍNH */}
       <div className="sakura-main-layout">
+        {/* SIDEBAR BÊN TRÁI */}
         <aside className="sakura-left-sidebar">
           <div className="sidebar-card">
             <h3 className="sidebar-title">DANH MỤC</h3>
@@ -86,38 +89,28 @@ export default function Menu() {
                 <button
                   key={cat}
                   className="nav-btn"
-                  onClick={() =>
-                    sectionRefs.current[cat]?.scrollIntoView({
-                      behavior: "smooth",
-                    })
-                  }
+                  onClick={() => {
+                    const container = contentRef.current;
+                    const target = sectionRefs.current[cat];
+
+                    if (container && target) {
+                      const top = target.offsetTop - container.offsetTop;
+                      container.scrollTo({
+                        top,
+                        behavior: "smooth",
+                      });
+                    }
+                  }}
                 >
                   🌸 {cat}
                 </button>
               ))}
             </nav>
-
-            {getUser() && (
-              <div className="sidebar-footer">
-                <button
-                  className="cart-btn"
-                  onClick={() => navigate("/cart")}
-                >
-                  🛒 XEM GIỎ HÀNG ({totalItems})
-                </button>
-                {/* NÚT THANH TOÁN MỚI THÊM */}
-                <button
-                  className="checkout-btn"
-                  onClick={() => navigate("/cart")}
-                >
-                  💳 THANH TOÁN
-                </button>
-              </div>
-            )}
           </div>
         </aside>
 
-        <main className="sakura-right-content">
+        {/* NỘI DUNG CUỘN BÊN PHẢI */}
+        <main className="sakura-right-content" ref={contentRef}>
           {Object.keys(groupedProducts).map((cat) => (
             <section
               key={cat}

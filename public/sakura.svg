@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <style>
+    @keyframes rotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .sakura {
+      transform-origin: center;
+      animation: rotate 3s linear infinite;
+      font-size: 70px;
+    }
+  </style>
+  <text x="50%" y="50%" dy=".35em" text-anchor="middle" class="sakura">🌸</text>
+</svg>

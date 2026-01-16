@@ -129,7 +129,10 @@ export default function AdminBooking() {
           <Link to="/admin/products" className="nav-item">📦 Thực đơn</Link>
           <Link to="/admin/accounts" className="nav-item">👥 Tài khoản</Link>
           <Link to="/admin/bookings" className="nav-item active">📅 Đặt bàn</Link>
+          
           <Link to="/admin/orders" className="nav-item">📊 Lịch sử đơn</Link>
+          <Link to="/admin/purchases" className="nav-item">🚚 Nhập kho</Link>
+              <Link to="/admin/revenue" className="nav-item">💰 Doanh số</Link>
           <Link to="/Home" className="nav-item">🏠 Trang chủ</Link>
         </nav>
       </aside>

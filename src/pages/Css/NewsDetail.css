@@ -1,0 +1,103 @@
+/* NewsDetail.css - Style Sakura Cafe Ghibli */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Quicksand:wght@400;500;600&display=swap');
+
+.news-detail-container {
+    max-width: 850px;
+    margin: 50px auto;
+    padding: 40px;
+    background-color: #fffaf5; /* Màu nền hơi kem cho ấm cúng */
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+    font-family: 'Quicksand', sans-serif;
+}
+
+/* Nút quay lại kiểu Vintage */
+.btn-back {
+    background-color: transparent;
+    border: 1px solid #d3a2a2;
+    color: #b22830;
+    padding: 10px 24px;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    margin-bottom: 40px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-back:hover {
+    background-color: #b22830;
+    color: white;
+    transform: translateX(-5px);
+}
+
+/* Tiêu đề bay bổng */
+.news-detail-title {
+    font-family: 'Playfair Display', serif; /* Font chữ có chân sang trọng */
+    font-size: 2.8rem;
+    color: #4a2c2c; /* Màu nâu gỗ đậm */
+    line-height: 1.2;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.news-meta {
+    font-size: 0.9rem;
+    color: #a68b8b;
+    margin-bottom: 30px;
+    border-bottom: 1px solid #f1ece1;
+    padding-bottom: 15px;
+}
+
+/* Ảnh bo góc tròn cực chill */
+.news-detail-image {
+    width: 100%;
+    border-radius: 30px 10px 30px 10px; /* Bo góc không đối xứng cho nghệ thuật */
+    margin-bottom: 40px;
+    border: 8px solid white; /* Giống viền ảnh Polaroid */
+    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+}
+
+/* Đoạn tóm tắt (Summary) */
+.news-summary-bold {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #6d4c41;
+    font-style: italic;
+    line-height: 1.6;
+    margin-bottom: 35px;
+    padding-left: 25px;
+    border-left: 5px solid #ffb7c5; /* Màu hồng Sakura nhạt */
+}
+
+/* Nội dung chính */
+.news-main-text {
+    font-size: 1.2rem;
+    color: #555;
+    line-height: 2; /* Giãn dòng rộng cho dễ đọc */
+    text-align: justify;
+    white-space: pre-line;
+}
+
+/* Hiệu ứng cho chữ cái đầu tiên (Drop Cap) */
+.news-main-text::first-letter {
+    font-family: 'Playfair Display', serif;
+    font-size: 3.5rem;
+    float: left;
+    margin-right: 10px;
+    color: #b22830;
+    line-height: 1;
+}
+
+/* Responsive cho mobile */
+@media (max-width: 768px) {
+    .news-detail-container {
+        margin: 20px 10px;
+        padding: 20px;
+    }
+    .news-detail-title {
+        font-size: 1.8rem;
+    }
+}

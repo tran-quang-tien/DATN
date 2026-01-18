@@ -8,6 +8,7 @@ import CafeImg from "./picture/cafe rang.png";
 import Vuichoi from "./picture/masoi.png";
 import giaikhat from "./picture/giaikhat.png";
 import khongian from "./picture/khonggianquan.png";
+import banner from "./picture/banner.png"
 
 // --- COMPONENT DINO GAME (Giữ nguyên logic của bạn) ---
 const DinoGame = () => {
@@ -309,14 +310,24 @@ export default function Home() {
           </div>
         </div>
       )}
-
-      {/* NỘI DUNG TRANG CHỦ */}
-      <div className="home-hero-banner">
-        <div className="hero-overlay">
-          <h1>Sakura Café</h1>
-          <p>Hương vị trà đạo & cà phê nguyên bản Nhật Bản</p>
-        </div>
-      </div>
+                    <div className="home-hero-banner">
+            {/* Thẻ img này sẽ đóng vai trò làm hình nền */}
+            <img src={banner} alt="Banner Sakura" className="banner-bg-image" />
+            
+            <div className="hero-overlay">
+              <div className="hero-content-box">
+                <h1>Sakura Café</h1>
+                <div className="hero-line"></div>
+                <p>Hương vị trà đạo & cà phê nguyên bản Nhật Bản</p>
+                <button 
+                  className="hero-cta-btn" 
+                  onClick={() => window.scrollTo({top: 800, behavior: 'smooth'})}
+                >
+                  KHÁM PHÁ NGAY
+                </button>
+              </div>
+            </div>
+</div>
 
       <div className="categories-grid">
         <div className="category-item">
@@ -338,13 +349,23 @@ export default function Home() {
       </div>
 
       <div className="featured-row">
-        <div className="featured-text">
-          <h2>Chào mừng đến Sakura</h2>
-          <p>Tận hưởng không gian trà đạo Nhật Bản giữa lòng thành phố.</p>
-          <button className="read-more-btn">XEM THỰC ĐƠN</button>
-        </div>
-        <div className="featured-promo"><img src={khongian} alt="Space" /></div>
-      </div>
+  <div className="featured-text">
+    <h2>Chào mừng đến Sakura</h2>
+    <p>
+      Tận hưởng không gian trà đạo Nhật Bản tinh tế giữa lòng thành phố nhộn nhịp. 
+      Tại Sakura Café, mỗi tách trà không chỉ là một thức uống, mà là một hành trình 
+      tìm về sự tĩnh lặng trong tâm hồn. Với nguyên liệu nhập khẩu trực tiếp từ 
+      vùng đất Uji trứ danh và quy trình rang xay cà phê thủ công, chúng tôi mang 
+      đến sự kết hợp hoàn hảo giữa nét truyền thống Á Đông và nhịp sống hiện đại. 
+      Hãy để hương thơm nhẹ nhàng của Matcha và vị đậm đà của cà phê nguyên bản 
+      vỗ về mọi giác quan của bạn.
+    </p>
+    <button className="read-more-btn">XEM THỰC ĐƠN</button>
+  </div>
+  <div className="featured-promo">
+    <img src={khongian} alt="Space" />
+  </div>
+</div>
     </div>
   );
 }

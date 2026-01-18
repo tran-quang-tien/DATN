@@ -1,206 +1,177 @@
+/* --- TỔNG THỂ HEADER --- */
 .sakura-header {
-    width: 100%;
-    background-color: rgba(255, 255, 255, 0.98);
-    backdrop-filter: blur(10px);
-    border-bottom: 2px solid #ffeff2;
-    position: sticky;
-    top: 0;
-    z-index: 2000;
-    height: 80px;
-    display: flex;
-    align-items: center;
+  background-color: #ffffff;
+  border-bottom: 2px solid #ffdae0;
+  padding: 0;
+  height: 80px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 10px rgba(255, 218, 224, 0.3);
+  display: flex;
+  align-items: center;
 }
 
-/* GIỚI HẠN CHIỀU RỘNG HEADER */
 .header-inner-container {
-    max-width: 1200px;
-    width: 100%;
-    margin: 0 auto;
-    padding: 0 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  max-width: 1250px;
+  margin: 0 auto;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
 }
 
-/* LOGO */
+/* --- LOGO --- */
 .sakura-logo {
-    font-size: 1.6rem;
-    font-weight: 800;
-    color: #ff4081;
-    cursor: pointer;
-    white-space: nowrap;
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #d0021b;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
 }
-.sakura-logo span { color: #333; }
 
-/* NAVIGATION */
+.sakura-logo span {
+  color: #ff8da1;
+}
+
+/* --- NAVIGATION --- */
 .sakura-nav {
-    display: flex;
-    gap: 30px;
+  display: flex;
+  gap: 25px;
+  align-items: center;
 }
+
 .sakura-nav a {
-    text-decoration: none;
-    color: #444;
-    font-weight: 600;
-    font-size: 0.95rem;
-    transition: 0.3s;
+  text-decoration: none;
+  color: #444;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: 0.3s ease;
+  padding: 10px 0;
+  position: relative;
 }
-.sakura-nav a:hover { color: #ff4081; }
 
-/* ACTIONS & SEARCH */
+.sakura-nav a:hover {
+  color: #d0021b;
+}
+
+/* Gạch chân khi hover */
+.sakura-nav a::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: #d0021b;
+  transition: 0.3s;
+}
+
+.sakura-nav a:hover::after {
+  width: 100%;
+}
+
+/* --- MENU TIN TỨC DỌC (Dropdown) --- */
+.sakura-news-dropdown {
+  position: relative;
+}
+
+.news-trigger {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.news-dropdown-vertical {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: #fff;
+  min-width: 240px;
+  list-style: none;
+  padding: 10px 0;
+  margin: 0;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  border-radius: 8px;
+  border: 1px solid #ffdae0;
+  display: none; /* Ẩn mặc định */
+  flex-direction: column;
+}
+
+.news-dropdown-vertical li a {
+  padding: 12px 20px;
+  width: 100%;
+  color: #555 !important;
+  font-size: 0.9rem !important;
+  border-bottom: 1px solid #fff5f6;
+  display: block;
+}
+
+.news-dropdown-vertical li a::after { display: none; } /* Bỏ gạch chân menu con */
+
+.news-dropdown-vertical li a:hover {
+  background-color: #fff5f6;
+  color: #d0021b !important;
+  padding-left: 25px;
+}
+
+/* Hiện menu khi hover */
+.sakura-news-dropdown:hover .news-dropdown-vertical {
+  display: flex;
+  animation: slideUp 0.3s ease;
+}
+
+/* --- USER SECTION & ACTIONS --- */
 .sakura-actions {
-    display: flex;
-    align-items: center;
-    gap: 25px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
 }
 
-.search-bar {
-    display: flex;
-    background: #f5f5f5;
-    border-radius: 20px;
-    padding: 5px 15px;
-    border: 1px solid transparent;
-}
-.search-bar:focus-within {
-    border-color: #ffc1cf;
-    background: #fff;
-}
-.search-bar input {
-    border: none;
-    background: transparent;
-    outline: none;
-    padding: 5px;
-    width: 150px;
-}
-.search-bar button {
-    border: none;
-    background: transparent;
-    cursor: pointer;
+.btn-login-sakura {
+  background: #d0021b;
+  color: white;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
 }
 
-/* USER SECTION */
-.user-dropdown-wrapper {
-    position: relative;
+.btn-login-sakura:hover {
+  background: #ff4d6d;
 }
 
 .user-trigger {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 5px 10px;
-    border-radius: 30px;
-    cursor: pointer;
-    transition: 0.25s;
-}
-.user-trigger:hover {
-    background: #fff0f3;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  padding: 5px 12px;
+  border-radius: 30px;
+  background: #fff5f6;
 }
 
 .nav-avatar {
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid #ff4081;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #ffdae0;
 }
 
 .user-name {
-    font-weight: 600;
-    color: #333;
-    max-width: 100px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+  font-weight: 600;
+  color: #444;
+  font-size: 0.9rem;
 }
 
-.arrow {
-    font-size: 0.7rem;
-    color: #777;
-}
-
-/* DROPDOWN MENU */
-.dropdown-menu {
-    position: absolute;
-    top: 120%;
-    right: 0;
-    width: 240px;
-    background: white;
-    border-radius: 14px;
-    box-shadow: 0 12px 30px rgba(0,0,0,0.12);
-    list-style: none;
-    padding: 10px;
-    border: 1px solid #ffeff2;
-
-    /* ẨN MẶC ĐỊNH */
-    opacity: 0;
-    transform: translateY(10px);
-    pointer-events: none;
-    transition: 0.25s ease;
-    z-index: 999;
-}
-
-/* HIỆN KHI CLICK */
-.user-dropdown-wrapper.active .dropdown-menu {
-    opacity: 1;
-    transform: translateY(0);
-    pointer-events: auto;
-}
-
-/* DROPDOWN CONTENT */
-.dropdown-info {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 10px;
-}
-.dropdown-info img {
-    width: 45px;
-    height: 45px;
-    border-radius: 50%;
-}
-.dropdown-info p {
-    font-size: 0.8rem;
-    color: #888;
-}
-
-.dropdown-menu hr {
-    border: none;
-    height: 1px;
-    background: #ffeff2;
-    margin: 6px 0;
-}
-
-.dropdown-menu button {
-    width: 100%;
-    text-align: left;
-    padding: 10px;
-    border: none;
-    background: transparent;
-    cursor: pointer;
-    font-size: 0.9rem;
-    border-radius: 8px;
-    transition: 0.2s;
-}
-.dropdown-menu button:hover {
-    background: #fff0f3;
-    color: #ff4081;
-}
-
-.logout-item {
-    color: #d32f2f !important;
-}
-
-/* BUTTON LOGIN */
-.btn-login-sakura {
-    background: #ff4081;
-    color: white;
-    border: none;
-    padding: 10px 25px;
-    border-radius: 25px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: 0.3s;
-}
-.btn-login-sakura:hover {
-    background: #d81b60;
-    box-shadow: 0 5px 15px rgba(255, 64, 129, 0.4);
+/* --- ANIMATION --- */
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }

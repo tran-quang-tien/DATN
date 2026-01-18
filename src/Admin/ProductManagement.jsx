@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { NavLink , useNavigate } from "react-router-dom";
 import { getProducts, deleteProduct } from "../api/Api";
 import "./Css/ProductManagement.css";
 import axios from "axios"; 
@@ -92,15 +92,14 @@ function ProductManagement() {
       <aside className="sakura-sidebar">
         <div className="sidebar-brand">SAKURA ADMIN</div>
         <nav className="sidebar-nav">
-          <Link to="/admin/products" className="nav-item active">📦 Thực đơn</Link>
-          <Link to="/admin/accounts" className="nav-item">👥 Tài khoản</Link>
-          <Link to="/admin/bookings" className="nav-item">📅 Đặt bàn</Link>
-       
-          <Link to="/admin/orders" className="nav-item active">📊 Lịch sử đơn</Link>
-          <Link to="/admin/purchases" className="nav-item">🚚 Nhập kho</Link>
-             <Link to="/admin/revenue" className="nav-item">💰 Doanh số</Link>
-          <div className="nav-divider"></div>
-          <Link to="/Home" className="nav-item">🏠 Trang chủ</Link>
+          <NavLink  to="/admin/products" className="nav-item">📦 Thực đơn</NavLink >
+                             <NavLink  to="/admin/accounts" className="nav-item">👥 Tài khoản</NavLink >
+                             <NavLink  to="/admin/bookings" className="nav-item">📅 Đặt bàn</NavLink >
+                             <NavLink  to="/admin/orders" className="nav-item">📊 Lịch sử đơn</NavLink >
+                             <NavLink  to="/admin/purchases" className="nav-item">🚚 Nhập kho</NavLink >
+                             <NavLink  to="/admin/revenue" className="nav-item tab-active" style={{background: '#fce4ec', color: '#e91e63'}}>💰 Doanh số</NavLink >
+                             <NavLink  to="/admin/news/add" className="nav-item active">📝 Đăng tin tức</NavLink >
+                             <NavLink  to="/Home" className="nav-item">🏠 Trang chủ</NavLink >
         </nav>
       </aside>
 
@@ -163,7 +162,7 @@ function ProductManagement() {
                         {Number(item.price).toLocaleString()}đ
                       </td>
                       <td>
-                        <div className="action-links" style={{display: 'flex', gap: '10px', justifyContent: 'flex-end'}}>
+                        <div className="action-NavLink s" style={{display: 'flex', gap: '10px', justifyContent: 'flex-end'}}>
                           <button className="lnk-edit" style={{color: '#2196f3', border: 'none', background: 'none', cursor: 'pointer'}} onClick={() => { setEditingProduct(item); setSelectedFile(null); }}>Sửa</button>
                           <button className="lnk-delete" style={{color: '#f44336', border: 'none', background: 'none', cursor: 'pointer'}} onClick={() => handleDelete(item.product_id)}>Xóa</button>
                         </div>

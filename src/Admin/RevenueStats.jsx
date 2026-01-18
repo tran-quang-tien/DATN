@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { NavLink  } from "react-router-dom";
 import { Bar } from "react-chartjs-2";
 import { Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell, WidthType, AlignmentType } from "docx";
 import { saveAs } from "file-saver";
@@ -121,15 +121,17 @@ export default function RevenueStats() {
             <aside className="sakura-sidebar">
                 <div className="sidebar-brand">SAKURA ADMIN</div>
                 <nav className="sidebar-nav">
-                    <Link to="/admin/products" className="nav-item">📦 Thực đơn</Link>
-                    <Link to="/admin/accounts" className="nav-item">👥 Tài khoản</Link>
-                    <Link to="/admin/bookings" className="nav-item">📅 Đặt bàn</Link>
-                    <Link to="/admin/orders" className="nav-item">📊 Lịch sử đơn</Link>
-                    <Link to="/admin/purchases" className="nav-item">🚚 Nhập kho</Link>
-                    <Link to="/admin/revenue" className="nav-item tab-active" style={{background: '#fce4ec', color: '#e91e63'}}>💰 Doanh số</Link>
-                    <Link to="/Home" className="nav-item">🏠 Trang chủ</Link>
+                    <NavLink to="/admin/products" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>📦 Thực đơn</NavLink>
+                    <NavLink to="/admin/accounts" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>👥 Tài khoản </NavLink>
+                    <NavLink to="/admin/bookings" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>  📅 Đặt bàn</NavLink>
+                    <NavLink to="/admin/orders" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>   📊 Lịch sử đơn </NavLink>
+                    <NavLink to="/admin/purchases" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}> 🚚 Nhập kho</NavLink>
+                    <NavLink to="/admin/revenue" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>💰 Doanh số</NavLink>
+                    <NavLink to="/admin/news/add" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>📝 Đăng tin tức</NavLink>
+                    <NavLink to="/Home" className="nav-item"> 🏠 Trang chủ </NavLink>
                 </nav>
-            </aside>
+             </aside>
+
 
             <main className="sakura-main">
                 <div className="main-header" style={{display:'flex', justifyContent:'space-between', marginBottom: '20px'}}>

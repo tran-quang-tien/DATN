@@ -45,10 +45,8 @@ export default function Header() {
     navigate("/Login");
   };
 
-  // PHẦN SỬA QUAN TRỌNG: Để hiện được ảnh từ Server
   const getAvatar = (user) => {
     if (!user?.avatar) return defaultAvatar;
-    // Nếu đường dẫn bắt đầu bằng /images thì nối với domain backend
     if (user.avatar.startsWith('/images')) {
       return `http://localhost:3003${user.avatar}`;
     }
@@ -66,16 +64,20 @@ export default function Header() {
           <Link to="/Home">Trang chủ</Link>
           <Link to="/menu">Cửa hàng</Link>
           <Link to="/booking">Đặt bàn</Link>
+          
+          {/* MỤC TIN TỨC MỚI THÊM VÀO */}
+          <div className="sakura-news-dropdown">
+            <Link to="/news" className="news-trigger">
+              Tin tức 
+            </Link>
+  
+          </div>
+
           <Link to="/tuyen-dung">Tuyển dụng</Link>
           <Link to="/contact">Liên hệ</Link>
         </nav>
 
         <div className="sakura-actions">
-          {/* <div className="search-bar">
-            <input type="text" placeholder="Tìm kiếm món ăn..." />
-            <button>🔍</button>
-          </div> */} 
-
           <div className="sakura-user-section">
             {!currentUser ? (
               <button className="btn-login-sakura" onClick={() => navigate("/Login")}>

@@ -1,0 +1,116 @@
+/* Footer.css - Tông màu Sakura sáng sủa */
+.sakura-footer {
+  background-color: #fff9fa; /* Màu trắng sữa ánh hồng đào */
+  color: #444;
+  padding: 60px 0 20px 0;
+  width: 100%;
+  border-top: 5px solid #ffdae0;
+}
+
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  padding: 0 25px;
+}
+
+.footer-section {
+  flex: 1;
+  min-width: 280px;
+  margin-bottom: 30px;
+}
+
+.footer-section h3 {
+  color: #d0021b; /* Đỏ Sakura cho tiêu đề */
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+/* Logo chữ Sakura Café với hiệu ứng Gradient */
+.footer-logo {
+  background: linear-gradient(to right, #d0021b, #ff8da1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-size: 1.8rem !important;
+  margin-bottom: 15px !important;
+}
+
+.footer-section p {
+  line-height: 1.8;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+/* Danh sách link dịch vụ */
+.footer-links {
+  list-style: none;
+  padding: 0;
+}
+
+.footer-links li {
+  margin-bottom: 12px;
+  color: #666;
+  transition: 0.3s;
+  cursor: pointer;
+}
+
+.footer-links li:hover {
+  color: #d0021b;
+  padding-left: 8px;
+}
+
+/* Phần Social Icons */
+.footer-social {
+  margin-top: 25px;
+}
+
+.social-label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #d0021b;
+}
+
+.social-icons {
+  display: flex;
+  gap: 15px;
+}
+
+.social-icons a {
+  text-decoration: none;
+  color: #fff;
+  background: #ff8da1; /* Nền nút màu hồng */
+  padding: 8px 15px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  transition: 0.3s;
+}
+
+.social-icons a:hover {
+  background: #d0021b; /* Chuyển đỏ khi hover */
+  transform: translateY(-3px);
+}
+
+.footer-bottom {
+  border-top: 1px solid #fce4e7;
+  text-align: center;
+  padding-top: 25px;
+  margin-top: 30px;
+  font-size: 0.85rem;
+  color: #aaa;
+}
+
+/* Responsive Mobile */
+@media (max-width: 768px) {
+  .footer-content {
+    flex-direction: column;
+    text-align: center;
+  }
+  .social-icons {
+    justify-content: center;
+  }
+}

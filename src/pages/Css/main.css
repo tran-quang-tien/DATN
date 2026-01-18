@@ -1,11 +1,11 @@
-/* --- RESET & CẤU TRÚC CHUNG --- */
+/* --- 1. RESET & CẤU TRÚC CHUNG --- */
 html, body {
   margin: 0;
   padding: 0;
   height: auto !important;
   overflow-y: auto !important;
   background-color: #f9f5f0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   scroll-behavior: smooth;
 }
 
@@ -16,365 +16,281 @@ html, body {
   flex-direction: column;
 }
 
-/* --- BANNER ANH ĐÀO --- */
+/* --- 2. BANNER HERO (DÙNG THẺ IMG LÀM NỀN) --- */
 .home-hero-banner {
-  height: 550px;
-  background-image: url('https://images.unsplash.com/photo-1493770348161-369560ae357d?w=1600');
-  background-size: cover;
-  background-position: center;
+  width: 100%;
+  height: 600px; /* Chiều cao cố định */
   position: relative;
-  border-bottom: 8px solid #d35400;
-}
-
-.hero-overlay {
-  background: rgba(0, 0, 0, 0.5);
-  height: 100%;
+  overflow: hidden;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
   align-items: center;
-  color: white;
-  text-align: center;
+  justify-content: center;
 }
 
-.hero-overlay h1 { font-size: 4rem; margin-bottom: 10px; text-shadow: 2px 2px 10px rgba(0,0,0,0.5); }
-.hero-overlay p { font-size: 1.5rem; }
+/* Ép ảnh làm hình nền */
+.banner-bg-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Giữ tỷ lệ ảnh không bị méo */
+  z-index: 1;
+}
 
-/* --- GRID DANH MỤC --- */
+/* Lớp phủ tối mờ */
+.hero-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.45); /* Độ tối mờ 45% */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+/* Hộp nội dung chữ Glassmorphism */
+.hero-content-box {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 50px 80px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  text-align: center;
+  color: white;
+  z-index: 3;
+}
+
+.hero-content-box h1 {
+  font-size: 3.5rem;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  font-weight: 800;
+}
+
+.hero-line {
+  width: 80px;
+  height: 4px;
+  background-color: #d0021b; /* Màu đỏ Sakura */
+  margin: 20px auto;
+}
+
+.hero-content-box p {
+  font-size: 1.2rem;
+  margin-bottom: 30px;
+  font-weight: 300;
+  letter-spacing: 1px;
+}
+
+.hero-cta-btn {
+  background: transparent;
+  color: white;
+  border: 2px solid white;
+  padding: 14px 40px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: 4px;
+}
+
+.hero-cta-btn:hover {
+  background: white;
+  color: #d0021b;
+  transform: translateY(-3px);
+}
+
+/* --- 3. GRID DANH MỤC SẢN PHẨM --- */
 .categories-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
+  gap: 25px;
   max-width: 1200px;
-  margin: -60px auto 60px;
+  margin: -60px auto 60px; /* Đè lên banner một chút */
   padding: 0 20px;
   z-index: 10;
+  position: relative;
 }
 
 .category-item {
   background: white;
-  border: 1px solid #ddd;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-  transition: transform 0.3s;
-  border-radius: 8px;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  transition: 0.3s;
   overflow: hidden;
 }
 
-.category-item:hover { transform: translateY(-10px); }
-.category-item img { width: 100%; height: 180px; object-fit: cover; }
-.category-info { padding: 20px; text-align: center; }
-.category-info h4 { color: #d0021b; margin: 0 0 10px 0; font-size: 1.2rem; }
+.category-item:hover {
+  transform: translateY(-10px);
+}
 
-/* --- PHẦN GIỚI THIỆU --- */
+.category-item img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+}
+
+.category-info {
+  padding: 20px;
+  text-align: center;
+}
+
+.category-info h4 {
+  color: #d0021b;
+  margin: 0 0 8px 0;
+  text-transform: uppercase;
+}
+
+/* --- 4. PHẦN GIỚI THIỆU CHI TIẾT --- */
 .featured-row {
   display: flex;
   max-width: 1200px;
-  margin: 40px auto 80px;
-  gap: 50px;
+  margin: 50px auto 100px;
+  gap: 60px;
   padding: 0 20px;
   align-items: center;
 }
 
 .featured-text { flex: 1; }
-.featured-text h2 { color: #c0392b; font-size: 2.5rem; margin-bottom: 25px; }
-.featured-text p { line-height: 2; font-size: 1.1rem; color: #555; margin-bottom: 30px; }
+.featured-text h2 { color: #d0021b; font-size: 2.5rem; margin-bottom: 25px; }
+.featured-text p { line-height: 1.8; color: #555; font-size: 1.1rem; }
 
 .read-more-btn {
   background: #d0021b;
   color: white;
   border: none;
   padding: 15px 35px;
-  cursor: pointer;
+  border-radius: 30px;
   font-weight: bold;
-  font-size: 1rem;
-  border-radius: 5px;
-  transition: 0.3s;
+  cursor: pointer;
+  margin-top: 20px;
 }
-.read-more-btn:hover { background: #b00216; }
 
-.featured-promo { flex: 1; position: relative; }
-.featured-promo img { width: 100%; border: 10px solid white; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+.featured-promo { flex: 1; }
+.featured-promo img {
+  width: 100%;
+  border-radius: 20px;
+  box-shadow: 20px 20px 0px #ffdae0; /* Viền trang trí lệch */
+}
 
-/* --- NÚT GIẢI TRÍ (DINO) TÁCH RIÊNG --- */
-.dino-float-bubble {
+/* --- 5. HỆ THỐNG NÚT NỔI & CHAT --- */
+.dino-float-bubble, .main-contact-btn {
   position: fixed;
-  bottom: 85px; /* Nằm trên nút liên hệ */
   right: 30px;
   background: #d0021b;
   color: white;
-  padding: 10px 20px;
-  border-radius: 25px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  padding: 12px 25px;
+  border-radius: 30px;
   cursor: pointer;
   font-weight: bold;
-  font-size: 14px;
-  box-shadow: 0 4px 15px rgba(208, 2, 27, 0.4);
-  z-index: 999;
-  transition: all 0.3s ease;
-}
-
-.dino-float-bubble:hover {
-  transform: scale(1.05);
-  background: #b00216;
-}
-
-/* --- CỤM LIÊN HỆ --- */
-.contact-fixed-wrapper {
-  position: fixed;
-  bottom: 30px;
-  right: 30px;
+  box-shadow: 0 5px 15px rgba(208, 2, 27, 0.4);
   z-index: 1000;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-}
-
-.main-contact-btn {
-  background: #d0021b;
-  color: white;
-  padding: 10px 20px;
-  border-radius: 25px;
-  cursor: pointer;
-  font-weight: bold;
-  font-size: 14px;
   display: flex;
   align-items: center;
   gap: 10px;
-  box-shadow: 0 4px 15px rgba(208, 2, 27, 0.4);
-  transition: all 0.3s ease;
 }
 
-.main-contact-btn:hover {
-  transform: scale(1.05);
-  background: #b00216;
-}
+.dino-float-bubble { bottom: 95px; background: #2d2d2d; } /* Nút game màu tối */
+.main-contact-btn { bottom: 30px; }
 
-.contact-flyout-menu {
-  background: white;
-  border-radius: 12px;
-  margin-bottom: 10px;
-  width: 200px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-  border: 1px solid #eee;
-  overflow: hidden;
-  animation: slideUp 0.3s ease-out;
-}
-
-.menu-divider { border: none; border-top: 1px solid #f0f0f0; margin: 0; }
-
-.menu-item {
-  display: flex;
-  align-items: center;
-  padding: 12px 15px;
-  cursor: pointer;
-  text-decoration: none;
-  color: #333;
-  font-size: 14px;
-  transition: 0.2s;
-}
-
-.menu-item:hover { background: #fff5f6; color: #d0021b; }
-.menu-item .icon { margin-right: 10px; font-size: 18px; display: flex; align-items: center; }
-
-/* --- DINO GAME MODAL --- */
-.game-modal {
-  position: fixed;
-  top: 0; left: 0; width: 100%; height: 100%;
-  background: rgba(0, 0, 0, 0.8);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 10000;
-  backdrop-filter: blur(4px);
-}
-
-.game-content {
-  background: white;
-  padding: 40px 25px 25px 25px;
-  border-radius: 15px;
-  position: relative;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-  border: 3px solid #ffb7c5;
-}
-
-.close-btn {
-  position: absolute;
-  top: 5px; right: 15px;
-  font-size: 35px;
-  border: none; background: none;
-  cursor: pointer; color: #999;
-}
-.close-btn:hover { color: #ff4444; }
-
-.game-wrapper {
-  position: relative;
-  border-bottom: 2px solid #535353;
-  background-color: #fafafa;
-}
-
-.game-score-display {
-  position: absolute;
-  top: 10px; right: 10px;
-  font-family: 'Courier New', Courier, monospace;
-  font-size: 22px; color: #535353; font-weight: bold;
-}
-
-.game-over-overlay {
-  position: absolute;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  background: rgba(255, 255, 255, 0.9);
-  padding: 20px; border-radius: 10px;
-  border: 1px solid #ddd; text-align: center;
-}
-
-/* --- FOOTER --- */
-.sakura-footer {
-  background-color: #2c3e50;
-  color: #ecf0f1;
-  padding: 60px 0 20px;
-  margin-top: auto;
-}
-
-.footer-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 40px;
-  padding: 0 20px;
-}
-
-.footer-section h3 { color: #ff3366; margin-bottom: 25px; font-size: 1.3rem; }
-.footer-section p { font-size: 0.95rem; line-height: 1.8; color: #bdc3c7; }
-
-.footer-bottom {
-  text-align: center;
-  margin-top: 50px;
-  padding-top: 20px;
-  border-top: 1px solid #3e4f5f;
-  font-size: 0.8rem;
-  color: #7f8c8d;
-}
-
-/* Animations */
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(15px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-/* Box Chat CareSoft Style */
+/* Box Chat */
 .staff-chat-container {
   position: fixed;
   bottom: 20px;
   right: 20px;
-  width: 330px;
+  width: 380px;
   background: white;
-  border-radius: 12px;
+  border-radius: 16px;
   box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-  z-index: 10001;
+  z-index: 2000;
   overflow: hidden;
-  animation: slideUp 0.3s ease;
+  display: flex;
+  flex-direction: column;
 }
 
 .staff-chat-header {
   background: #d0021b;
   color: white;
-  padding: 12px 15px;
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.chat-messages-area {
+  height: 400px;
+  padding: 15px;
+  overflow-y: auto;
+  background: #fdf8f8;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.message-bubble {
+  max-width: 80%;
+  padding: 10px 15px;
+  border-radius: 15px;
+  font-size: 0.9rem;
+}
+
+.user-msg { align-self: flex-end; background: #d0021b; color: white; }
+.bot-msg { align-self: flex-start; background: #eee; color: #333; }
+
+.chat-input-footer {
+  padding: 15px;
+  border-top: 1px solid #eee;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.chat-input-footer input {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.footer-icons {
   display: flex;
   justify-content: space-between;
 }
 
-.staff-avatar { width: 45px; height: 45px; border-radius: 50%; border: 2px solid #fff; }
-
-.staff-chat-body { padding: 15px; display: flex; flex-direction: column; gap: 8px; }
-
-.staff-chat-body input, .staff-chat-body select, .staff-chat-body textarea {
-  border: 1px solid #ddd;
-  padding: 8px;
-  border-radius: 5px;
-  font-size: 13px;
+/* --- 6. GAME MODAL --- */
+.game-modal {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
 }
 
-.submit-chat-btn {
-  background: #d0021b;
-  color: white;
-  border: none;
-  padding: 10px;
-  border-radius: 20px;
-  font-weight: bold;
+.game-content {
+  background: white;
+  padding: 40px;
+  border-radius: 15px;
+  position: relative;
+}
+
+.close-btn {
+  position: absolute;
+  top: 10px; right: 15px;
+  font-size: 2rem;
   cursor: pointer;
-  margin-top: 10px;
+  border: none; background: none;
 }
 
-.close-chat-btn { background: none; border: none; color: white; font-size: 24px; cursor: pointer; }
-
-.chat-footer-brand {
-  text-align: right; font-size: 11px; padding: 5px 10px; color: #27ae60; font-weight: bold;
-}/* --- BOX CHAT TỔNG --- */
-.staff-chat-container {
-  position: fixed; bottom: 20px; right: 20px;
-  width: 350px; background: white;
-  border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-  z-index: 10001; overflow: hidden; display: flex; flex-direction: column;
-}
-
-.staff-chat-header {
-  background: #d0021b; color: white; padding: 12px 15px;
-  display: flex; justify-content: space-between; align-items: center;
-}
-
-.staff-avatar-small { width: 40px; height: 40px; border-radius: 50%; border: 2px solid #fff; }
-
-/* --- CỬA SỔ CHAT TRỰC TIẾP --- */
-.chat-window-content { display: flex; flex-direction: column; height: 400px; background: #f8f9fa; }
-
-.chat-messages-area {
-  flex: 1; padding: 15px; overflow-y: auto;
-  display: flex; flex-direction: column; gap: 12px;
-  background-image: linear-gradient(to bottom, #f8f9fa, #ffffff);
-}
-
-.message-bubble {
-  max-width: 85%; padding: 10px 14px; border-radius: 18px;
-  font-size: 13.5px; line-height: 1.5; word-wrap: break-word;
-}
-
-.bot-msg {
-  background: white; align-self: flex-start;
-  border: 1px solid #e0e0e0; color: #333;
-  border-bottom-left-radius: 2px;
-}
-
-.user-msg {
-  background: #d0021b; align-self: flex-end;
-  color: white; border-bottom-right-radius: 2px;
-}
-
-/* --- THANH NHẬP LIỆU --- */
-.chat-input-footer {
-  background: white; padding: 10px 15px;
-  border-top: 1px solid #eee; display: flex; flex-direction: column;
-}
-
-.chat-input-footer input {
-  border: none !important; outline: none !important;
-  padding: 8px 0; font-size: 14px; width: 100%;
-}
-
-.footer-icons {
-  display: flex; justify-content: flex-end; gap: 20px;
-  padding-top: 5px; color: #999; font-size: 18px;
-}
-
-.send-inline-btn {
-  background: none; border: none; color: #d0021b;
-  font-size: 20px; cursor: pointer; transition: 0.2s;
-}
-.send-inline-btn:hover { transform: scale(1.2); }
-
-.chat-footer-brand {
-  text-align: right; font-size: 11px; padding: 5px 15px;
-  color: #27ae60; font-weight: bold; background: #fff;
+/* Responsive */
+@media (max-width: 768px) {
+  .categories-grid { grid-template-columns: repeat(2, 1fr); }
+  .featured-row { flex-direction: column; }
+  .hero-content-box { padding: 30px; }
+  .hero-content-box h1 { font-size: 2rem; }
 }

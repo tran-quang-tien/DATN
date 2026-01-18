@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Link } from "react-router-dom";
+import { NavLink  } from "react-router-dom";
 import "./Css/AdminBooking.css";
 
 export default function AdminBooking() {
@@ -126,14 +126,14 @@ export default function AdminBooking() {
       <aside className="sakura-sidebar">
         <div className="sidebar-brand">SAKURA ADMIN</div>
         <nav className="sidebar-nav">
-          <Link to="/admin/products" className="nav-item">📦 Thực đơn</Link>
-          <Link to="/admin/accounts" className="nav-item">👥 Tài khoản</Link>
-          <Link to="/admin/bookings" className="nav-item active">📅 Đặt bàn</Link>
-          
-          <Link to="/admin/orders" className="nav-item">📊 Lịch sử đơn</Link>
-          <Link to="/admin/purchases" className="nav-item">🚚 Nhập kho</Link>
-              <Link to="/admin/revenue" className="nav-item">💰 Doanh số</Link>
-          <Link to="/Home" className="nav-item">🏠 Trang chủ</Link>
+         <NavLink  to="/admin/products" className="nav-item">📦 Thực đơn</NavLink >
+                            <NavLink  to="/admin/accounts" className="nav-item">👥 Tài khoản</NavLink >
+                            <NavLink  to="/admin/bookings" className="nav-item">📅 Đặt bàn</NavLink >
+                            <NavLink  to="/admin/orders" className="nav-item">📊 Lịch sử đơn</NavLink >
+                            <NavLink  to="/admin/purchases" className="nav-item">🚚 Nhập kho</NavLink >
+                            <NavLink  to="/admin/revenue" className="nav-item tab-active" style={{background: '#fce4ec', color: '#e91e63'}}>💰 Doanh số</NavLink >
+                            <NavLink  to="/admin/news/add" className="nav-item active">📝 Đăng tin tức</NavLink >
+                            <NavLink  to="/Home" className="nav-item">🏠 Trang chủ</NavLink >
         </nav>
       </aside>
 

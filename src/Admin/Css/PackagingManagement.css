@@ -1,0 +1,313 @@
+/*processing_steps
+   🌸 SAKURA – PACKAGING MANAGEMENT
+ processing_steps*/
+
+.pkg-mgmt-container {
+  padding: 20px;
+  background: #fff6fb;
+  min-height: 100vh;
+  font-family: "Segoe UI", sans-serif;
+}
+
+.title {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #d63384;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+/* ===== LAYOUT ===== */
+.pkg-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+/* ===== SECTION ===== */
+.pkg-section {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 8px 20px rgba(214, 51, 132, 0.15);
+  display: flex;
+  flex-direction: column;
+}
+
+.pkg-section h3 {
+  margin-bottom: 12px;
+  color: #c2185b;
+  font-size: 18px;
+}
+
+/*processing_steps
+   📦 BẢNG KHO BAO BÌ
+ processing_steps*/
+
+.table-wrapper {
+  max-height: 420px;
+  overflow-y: auto;
+  border-radius: 12px;
+}
+
+.sakura-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.sakura-table thead {
+  position: sticky;
+  top: 0;
+  background: #ffe3f1;
+  z-index: 2;
+}
+
+.sakura-table th,
+.sakura-table td {
+  padding: 10px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.sakura-table th {
+  color: #b0004f;
+  font-weight: 700;
+}
+
+.sakura-table tbody tr {
+  border-bottom: 1px solid #f5c2dc;
+}
+
+.sakura-table tbody tr:hover {
+  background: #fff0f8;
+}
+
+/* ===== STOCK ===== */
+.low-stock {
+  background: #fff1f1;
+}
+
+.stock-cell {
+  font-weight: 700;
+  color: #d63333;
+}
+
+/* ===== BUTTON ===== */
+.btn-edit {
+  background: linear-gradient(135deg, #ff5fa2, #ff87b7);
+  color: #fff;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.btn-edit:hover {
+  opacity: 0.85;
+}
+
+/*processing_steps
+   🥤 ĐỊNH MỨC BAO BÌ
+ processing_steps*/
+
+.scroll-grid-wrapper {
+  max-height: 420px;
+  overflow-y: auto;
+  padding-right: 6px;
+}
+
+.prod-pkg-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+/* ===== CARD ===== */
+.prod-pkg-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 14px;
+  box-shadow: 0 6px 16px rgba(214, 51, 132, 0.18);
+  display: flex;
+  flex-direction: column;
+}
+
+.prod-pkg-card h4 {
+  color: #c2185b;
+  margin-bottom: 10px;
+  font-size: 15px;
+  text-align: center;
+}
+
+/* ===== MINI LIST ===== */
+.pkg-list-mini {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.pkg-item-row {
+  display: flex;
+  justify-content: space-between;
+  background: #fff3f9;
+  padding: 6px 10px;
+  border-radius: 10px;
+  font-size: 13px;
+}
+
+.qty-tag {
+  background: #ff5fa2;
+  color: #fff;
+  padding: 2px 8px;
+  border-radius: 14px;
+  font-size: 12px;
+}
+
+/* ===== ADD BUTTON ===== */
+.btn-add-mini {
+  margin-top: auto;
+  background: transparent;
+  border: 2px dashed #ff5fa2;
+  color: #ff5fa2;
+  padding: 6px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.btn-add-mini:hover {
+  background: #ff5fa2;
+  color: #fff;
+}
+
+/*processing_steps
+   🌸 MODAL
+ processing_steps*/
+
+.sakura-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.sakura-modal {
+  background: #fff;
+  border-radius: 18px;
+  padding: 20px;
+  width: 360px;
+  box-shadow: 0 10px 30px rgba(214, 51, 132, 0.35);
+  animation: popIn 0.25s ease;
+}
+
+@keyframes popIn {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.sakura-modal h3 {
+  text-align: center;
+  margin-bottom: 14px;
+  color: #c2185b;
+}
+
+.highlight-text {
+  color: #ff5fa2;
+  font-weight: 700;
+}
+
+/* ===== MODAL BODY ===== */
+.modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.modal-body label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #8b0040;
+}
+
+.modal-body input {
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1.5px solid #f2a9cc;
+  font-size: 14px;
+}
+
+.modal-body input:focus {
+  outline: none;
+  border-color: #ff5fa2;
+}
+
+/* ===== MODAL FOOTER ===== */
+.modal-footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 16px;
+}
+
+.btn-save {
+  background: linear-gradient(135deg, #ff5fa2, #ff85b3);
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.btn-save:hover {
+  opacity: 0.85;
+}
+
+.btn-close {
+  background: #e0e0e0;
+  color: #333;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+/*processing_steps
+   🌸 LOADING
+ processing_steps*/
+
+.sakura-loading {
+  font-size: 20px;
+  text-align: center;
+  margin-top: 100px;
+  color: #d63384;
+}
+
+/*processing_steps
+   📱 RESPONSIVE
+ processing_steps*/
+
+@media (max-width: 900px) {
+  .pkg-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .table-wrapper,
+  .scroll-grid-wrapper {
+    max-height: 300px;
+  }
+
+  .sakura-modal {
+    width: 90%;
+  }
+}

@@ -12,62 +12,89 @@ export default function Login() {
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
-  e.preventDefault();
-  setErrorMsg("");
+    e.preventDefault();
+    setErrorMsg("");
+    try {
+      const response = await loginUser({ account: email, password: password });
 
-  try {
-    const response = await loginUser({ email, password });
-
-    if (response.success) {
-      // 🔥 XÓA GIỎ CŨ (CỰC QUAN TRỌNG)
-      localStorage.removeItem("sakura_cart");
-
-      // LƯU SESSION USER
-      sessionStorage.setItem(
-        "user_session",
-        JSON.stringify(response.user)
-      );
-
-      window.dispatchEvent(new Event("storage"));
-
-      // PHÂN QUYỀN
-      if (response.user.role_id === 1) {
-        window.location.href = "/admin";
-      } else if (response.user.role_id === 2) {
-        window.location.href = "/staff/order";
-      } else {
-        window.location.href = "/Home";
+      console.log("Dữ liệu User từ Server:", response.user);
+      if (response.success) {
+        localStorage.removeItem("sakura_cart");
+        sessionStorage.setItem(
+          "user_session",
+          JSON.stringify(response.user)
+        );
+        window.dispatchEvent(new Event("storage"));
+        
+        if (response.user.role_id === 1) {
+          window.location.href = "/admin";
+        } else if (response.user.role_id === 2) {
+          window.location.href = "/staff/order";
+        } else {
+          window.location.href = "/Home";
+        }
       }
+    } catch (error) {
+      setErrorMsg(error.message || "Email hoặc mật khẩu không đúng!");
     }
-  } catch (error) {
-    setErrorMsg(error.message || "Email hoặc mật khẩu không đúng!");
-  }
-};
+  };
+
   return (
     <div className="login-container">
       <div className="login-bg">
         <img src={loginBg} alt="Login background" />
         <div className="login-box">
           <h2>Đăng nhập hệ thống</h2>
+          
           {errorMsg && (
             <div style={{ background: '#ffeaea', color: '#d63031', padding: '10px', borderRadius: '8px', marginBottom: '15px', border: '1px solid #fab1a0', textAlign: 'center' }}>
               ⚠️ {errorMsg}
             </div>
           )}
+
           <form onSubmit={handleLogin}>
             <div className="form-group">
               <label>Email tài khoản</label>
-              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder="Nhập email..." />
+              <input 
+                type="text" 
+                value={email} 
+                onChange={(e) => setEmail(e.target.value)} 
+                required 
+                placeholder="Nhập email..." 
+              />
             </div>
+
             <div className="form-group" style={{ position: "relative" }}>
               <label>Mật khẩu</label>
-              <input type={showPass ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} required placeholder="Nhập mật khẩu..." />
-              <span onClick={() => setShowPass(!showPass)} style={{ position: "absolute", right: "15px", top: "40px", cursor: "pointer" }}>
+              <input 
+                type={showPass ? "text" : "password"} 
+                value={password} 
+                onChange={(e) => setPassword(e.target.value)} 
+                required 
+                placeholder="Nhập mật khẩu..." 
+              />
+              <span 
+                onClick={() => setShowPass(!showPass)} 
+                style={{ position: "absolute", right: "15px", top: "40px", cursor: "pointer" }}
+              >
                 {showPass ? "👁️" : "🙈"}
               </span>
             </div>
+
+            {/* NÚT QUÊN MẬT KHẨU */}
+            <div style={{ textAlign: "right", marginBottom: "15px" }}>
+              <span 
+                className="forgot-password-link"
+                onClick={() => navigate('/ForgotPassword')} 
+                style={{ color: "#d81b60", cursor: "pointer", fontSize: "0.9rem", fontWeight: "600" }}
+              >
+                Quên mật khẩu?
+              </span>
+            </div>
+
             <button type="submit" className="login-btn">Đăng nhập</button>
           </form>
+
           <div className="login-footer">
             <p>Chưa có tài khoản?</p>
             <button className="register-link-btn" onClick={() => navigate('/register')}>Đăng ký ngay</button>

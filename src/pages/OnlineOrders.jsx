@@ -73,7 +73,7 @@ export default function OnlineOrders() {
                             </div>
                             <div className="card-body">
                                 <div className="customer-info">
-                                    <p>👤 {order.full_name || "Khách vãng lai"}</p>
+                                    <p>👤 {order.fullname || "Khách vãng lai"}</p>
                                     <p>📞 {order.phone || "N/A"}</p>
                                 </div>
                                 <hr />

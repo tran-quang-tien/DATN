@@ -1,0 +1,81 @@
+:root {
+  --sidebar-width: 260px;
+  --header-height: 64px;
+  --transition-speed: 0.3s;
+}
+
+/* Khi có class này ở thẻ ngoài cùng, độ rộng sẽ tự động cập nhật toàn hệ thống */
+.sidebar-collapsed {
+  --sidebar-width: 80px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* --- LAYOUT KHÁCH HÀNG --- */
+.is-customer .main-content-wrapper {
+  padding-top: var(--header-height);
+  min-height: 100vh;
+}
+
+/* --- LAYOUT ADMIN (FIXED SIDEBAR & RESPONSIVE CONTENT) --- */
+.is-management .main-content-wrapper {
+  padding-top: 0 !important;
+}
+
+.admin-layout {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+}
+
+.sakura-sidebar {
+  width: var(--sidebar-width);
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: #ffffff;
+  border-right: 1px solid #eeeeee;
+  z-index: 1000;
+  transition: width var(--transition-speed) ease;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-main {
+  flex: 1;
+  /* Margin này sẽ tự nhảy theo --sidebar-width */
+  margin-left: var(--sidebar-width); 
+  background: #f8f9fa;
+  min-height: 100vh;
+  padding: 20px;
+  transition: margin-left var(--transition-speed) ease;
+}
+
+/* --- MODAL ĐĂNG XUẤT --- */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.logout-confirm-box {
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  text-align: center;
+  max-width: 400px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}

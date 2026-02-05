@@ -5,14 +5,25 @@ export default function ProductCard({ product, onAddToCart }) {
   const API_BASE = "http://localhost:3003";
 
   const title = product?.name || "Sản phẩm";
-  const displayPrice = product?.price
-    ? Number(product.price).toLocaleString("vi-VN")
-    : "0";
+
+  // ===== FIX LOGIC GIẢM GIÁ =====
+  const originalPrice = Number(product?.price || 0);
+
+  const discountPercent =
+    Array.isArray(product?.discount) && product.discount[0] > 0
+      ? Number(product.discount[0])
+      : 0;
+
+  const hasDiscount = discountPercent > 0;
+
+  const finalPrice = hasDiscount
+    ? Math.round(originalPrice * (1 - discountPercent / 100))
+    : originalPrice;
+  // ==============================
 
   const handleAddToCart = () => {
     const user = JSON.parse(sessionStorage.getItem("user_session"));
 
-    // ❌ CHƯA ĐĂNG NHẬP → KHÔNG CHO ADD
     if (!user) {
       alert("Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng!");
       return;
@@ -29,15 +40,15 @@ export default function ProductCard({ product, onAddToCart }) {
       cart.push({
         product_id: product.product_id,
         name: product.name,
-        price: product.price,
+        price: finalPrice,          // ✅ GIÁ SAU GIẢM
+        original_price: originalPrice,
+        discount: discountPercent,
         quantity: 1,
         image: product.image
       });
     }
 
     localStorage.setItem("sakura_cart", JSON.stringify(cart));
-
-    // cập nhật menu
     window.dispatchEvent(new Event("storage")); 
 
     if (onAddToCart) {
@@ -48,24 +59,26 @@ export default function ProductCard({ product, onAddToCart }) {
   return (
     <div className="product-card">
       <div className="image-box">
+        {/* BADGE GIẢM GIÁ */}
+        {hasDiscount && (
+          <div className="discount-badge">
+            -{discountPercent}%
+          </div>
+        )}
+
         <img
           src={
             product?.image
               ? `${API_BASE}${product.image}`
-              : "https://via.placeholder.com/150"
+              : "https://via.placeholder.com/300"
           }
           alt={title}
           onError={(e) => {
-            e.target.src = "https://via.placeholder.com/150";
+            e.target.src = "https://via.placeholder.com/300";
           }}
         />
-        <div
-          className="add-icon"
-          onClick={handleAddToCart}
-          style={{ cursor: "pointer" }}
-        >
-          +
-        </div>
+
+        <div className="add-icon" onClick={handleAddToCart}>+</div>
       </div>
 
       <div className="info-box">
@@ -75,7 +88,23 @@ export default function ProductCard({ product, onAddToCart }) {
         </p>
 
         <div className="price-row">
-          <span className="price">{displayPrice} đ</span>
+          <div className="price-container">
+            {hasDiscount ? (
+              <>
+                <span className="price-old">
+                  {originalPrice.toLocaleString("vi-VN")} đ
+                </span>
+                <span className="price-new">
+                  {finalPrice.toLocaleString("vi-VN")} đ
+                </span>
+              </>
+            ) : (
+              <span className="price">
+                {originalPrice.toLocaleString("vi-VN")} đ
+              </span>
+            )}
+          </div>
+
           <button className="buy-btn" onClick={handleAddToCart}>
             Chọn mua
           </button>

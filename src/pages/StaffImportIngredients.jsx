@@ -1,293 +1,197 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import "./Css/StaffOrder.css";
+import "./Css/StaffImport.css";
 
-export default function StaffOrder() {
+export default function StaffImport() {
   const navigate = useNavigate();
+  const [ingredients, setIngredients] = useState([]);
+  const [search, setSearch] = useState("");
+  const [importList, setImportList] = useState([]);
+  const [supplier, setSupplier] = useState("");
+  const [note, setNote] = useState("");
 
-  // POS
-  const [products, setProducts] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [cart, setCart] = useState([]);
-  const [activeCategoryId, setActiveCategoryId] = useState(null);
+  // State cho Modal thêm nguyên liệu mới
+  const [showModal, setShowModal] = useState(false);
+  const [newIng, setNewIng] = useState({ name: "", unit: "" });
 
-  // CHAT
-  const [showChatModal, setShowChatModal] = useState(false);
-  const [customers, setCustomers] = useState([]);
-  const [selectedCustomerId, setSelectedCustomerId] = useState(null);
-  const [messages, setMessages] = useState({});
-  const [inputMessage, setInputMessage] = useState("");
-
-  const scrollRef = useRef(null);
-  const fileInputRef = useRef(null);
-
-  // ================== LOAD POS DATA ==================
-  const fetchData = async () => {
-    try {
-      const [prodRes, catRes] = await Promise.all([
-        axios.get("http://localhost:3003/api/products"),
-        axios.get("http://localhost:3003/api/categories")
-      ]);
-      setProducts(prodRes.data);
-      setCategories(catRes.data);
-    } catch (err) {
-      console.error("Lỗi tải POS:", err);
-    }
-  };
-
+  // 1. Load danh sách từ database
   useEffect(() => {
-    fetchData();
+    axios.get("http://localhost:3003/api/staff/ingredients")
+      .then(res => setIngredients(res.data))
+      .catch(err => console.error("Lỗi tải dữ liệu:", err));
   }, []);
 
-  // ================== CHAT DATA ==================
-  const fetchChatData = async () => {
+  // 2. Thêm nguyên liệu vào phiếu nhập
+  const addIngredient = (item) => {
+    const exists = importList.find(i => i.ingredient_id === item.ingredient_id);
+    if (exists) {
+      updateItem(item.ingredient_id, "qty", exists.qty + 1);
+      return;
+    }
+    // Mặc định giá nhập là giá trong DB hoặc 0
+    setImportList([...importList, { ...item, qty: 1, import_price: item.import_price || 0 }]);
+  };
+
+  // 3. Cập nhật SL / Giá trực tiếp
+  const updateItem = (id, field, value) => {
+    setImportList(importList.map(i =>
+      i.ingredient_id === id ? { ...i, [field]: Number(value) } : i
+    ));
+  };
+
+  const removeItem = (id) => {
+    setImportList(importList.filter(i => i.ingredient_id !== id));
+  };
+
+  // 4. Tạo mới nguyên liệu hoàn toàn
+  const handleCreateNewIngredient = async () => {
+    if (!newIng.name || !newIng.unit) return alert("Vui lòng điền đủ thông tin!");
     try {
-      // 1. Danh sách khách
-      const resCus = await axios.get(
-        "http://localhost:3003/api/messages/customers"
-      );
+      const res = await axios.post("http://localhost:3003/api/staff/ingredients/new", newIng);
+      setIngredients([...ingredients, res.data]);
+      addIngredient(res.data); 
+      setShowModal(false);
+      setNewIng({ name: "", unit: "" });
+    } catch (err) { 
+        console.error(err);
+        alert("Lỗi khi tạo mới!"); 
+    }
+  };
 
-      const mapped = resCus.data.map(c => ({
-        id: c.customer_phone,
-        name: c.customer_name || "Khách",
-        phone: c.customer_phone
-      }));
+  // 5. Tính toán tiền
+  const subTotal = importList.reduce((sum, i) => sum + i.qty * i.import_price, 0);
+  const vat = subTotal * 0.08; // Thuế 8% theo form POS
+  const total = subTotal + vat;
 
-      setCustomers(mapped);
+  // 6. Xử lý lưu phiếu nhập (Sửa lỗi mất sự kiện nút Hoàn thành)
+  const handleSave = async () => {
+    if (!supplier) return alert("Vui lòng nhập tên nhà cung cấp!");
+    if (importList.length === 0) return alert("Chưa có nguyên liệu nào trong phiếu!");
 
-      // Auto chọn khách đầu tiên
-      if (!selectedCustomerId && mapped.length > 0) {
-        setSelectedCustomerId(mapped[0].id);
-        return;
-      }
+    const data = {
+        supplier_name: supplier,
+        total_amount: total,
+        note: note,
+        details: importList
+    };
 
-      // 2. Lịch sử chat
-      if (selectedCustomerId) {
-        const resHis = await axios.get(
-          `http://localhost:3003/api/messages/history/${selectedCustomerId}`
-        );
-
-        setMessages(prev => ({
-          ...prev,
-          [selectedCustomerId]: resHis.data.map(m => ({
-            text: m.message_text,
-            image_url: m.image_url,
-            type: m.sender_type, // staff | customer
-            time: new Date(m.created_at).toLocaleTimeString("vi-VN", {
-              hour: "2-digit",
-              minute: "2-digit"
-            })
-          }))
-        }));
-      }
+    try {
+        const res = await axios.post("http://localhost:3003/api/staff/purchase-orders", data);
+        if (res.data.success) {
+            alert("Đã lưu phiếu nhập và cập nhật kho thành công!");
+            setImportList([]);
+            setSupplier("");
+            setNote("");
+        }
     } catch (err) {
-      console.error("❌ Lỗi tải chat:", err);
+        alert("Lỗi khi lưu phiếu nhập: " + (err.response?.data?.error || err.message));
     }
   };
 
-  // Polling chat
-  useEffect(() => {
-    let interval;
-    if (showChatModal) {
-      fetchChatData();
-      interval = setInterval(fetchChatData, 3000);
-    }
-    return () => clearInterval(interval);
-  }, [showChatModal, selectedCustomerId]);
+  const filtered = ingredients.filter(i => i.name.toLowerCase().includes(search.toLowerCase()));
 
-  // Auto scroll
-  useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    }
-  }, [messages, selectedCustomerId]);
-
-  // ================== SEND MESSAGE ==================
-  const handleReplyMessage = async e => {
-    e.preventDefault();
-    if (!selectedCustomerId) return;
-
-    const text = inputMessage.trim();
-    const file = fileInputRef.current?.files[0];
-    if (!text && !file) return;
-
-    const cus = customers.find(c => c.id === selectedCustomerId);
-
-    const formData = new FormData();
-    formData.append("customer_name", cus?.name || "Khách");
-    formData.append("customer_phone", selectedCustomerId);
-    formData.append("sender_type", "staff");
-    formData.append("message_text", text);
-    if (file) formData.append("image", file);
-
-    try {
-      await axios.post(
-        "http://localhost:3003/api/messages/send",
-        formData
-      );
-      setInputMessage("");
-      if (fileInputRef.current) fileInputRef.current.value = "";
-      fetchChatData();
-    } catch {
-      alert("Không gửi được tin nhắn");
-    }
-  };
-
-  // ================== CART ==================
-  const addToCart = p => {
-    const exist = cart.find(i => i.product_id === p.product_id);
-    if (exist) {
-      setCart(
-        cart.map(i =>
-          i.product_id === p.product_id ? { ...i, qty: i.qty + 1 } : i
-        )
-      );
-    } else {
-      setCart([...cart, { ...p, qty: 1 }]);
-    }
-  };
-
-  const removeFromCart = id => {
-    setCart(cart.filter(i => i.product_id !== id));
-  };
-
-  const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
-
-  // ================== UI ==================
   return (
-    <div className="pos-container">
-      {/* LEFT */}
-      <div className="pos-left">
-        <div className="pos-nav">
-          <button
-            className={`tab-btn ${!activeCategoryId ? "active" : ""}`}
-            onClick={() => setActiveCategoryId(null)}
-          >
-            Tất cả
-          </button>
-          {categories.map(c => (
-            <button
-              key={c.category_id}
-              className={`tab-btn ${
-                activeCategoryId === c.category_id ? "active" : ""
-              }`}
-              onClick={() => setActiveCategoryId(c.category_id)}
-            >
-              {c.category_name}
-            </button>
-          ))}
-        </div>
-
-        <div className="pos-grid">
-          {products
-            .filter(p => !activeCategoryId || p.category_id === activeCategoryId)
-            .map(p => (
-              <div
-                key={p.product_id}
-                className="pos-card"
-                onClick={() => addToCart(p)}
-              >
-                <img src={`http://localhost:3003${p.image}`} alt={p.name} />
-                <p>{p.name}</p>
-                <span>{Number(p.price).toLocaleString()}đ</span>
-              </div>
-            ))}
-        </div>
+    <div className="import-container">
+      {/* HEADER BAR */}
+      <div className="import-header">
+        <button className="btn-back" onClick={() => navigate("/staff/order")}>← Quay lại Bán hàng</button>
+        <h2>PHIẾU NHẬP KHO</h2>
+        <div className="user-info">Nhân viên: <strong>Staff</strong></div>
       </div>
 
-      {/* RIGHT */}
-      <div className="pos-right">
-        <h3>Đơn hàng tại quầy</h3>
-
-        <div className="order-list">
-          {cart.length === 0 ? (
-            <p className="empty-cart">Chưa có món</p>
-          ) : (
-            cart.map(i => (
-              <div key={i.product_id} className="order-item">
-                <span>
-                  {i.name} x {i.qty}
-                </span>
-                <span>
-                  {(i.price * i.qty).toLocaleString()}đ
-                  <button onClick={() => removeFromCart(i.product_id)}>
-                    🗑️
-                  </button>
-                </span>
+      <div className="import-main-content">
+        {/* BÊN TRÁI: DANH MỤC (60%) */}
+        <div className="import-left">
+          <div className="left-controls">
+            <input 
+              className="search-input" 
+              placeholder="Tìm nguyên liệu..." 
+              value={search} 
+              onChange={(e) => setSearch(e.target.value)} 
+            />
+            <button className="btn-add-new" onClick={() => setShowModal(true)}>+ Thêm mới</button>
+          </div>
+          
+          <div className="ingredient-grid">
+            {filtered.map(item => (
+              <div className="ingredient-card" key={item.ingredient_id} onClick={() => addIngredient(item)}>
+                <div className="name">{item.name}</div>
+                <div className="unit">ĐVT: {item.unit}</div>
+                <div className="add-icon">+</div>
               </div>
-            ))
-          )}
+            ))}
+          </div>
         </div>
 
-        <div className="order-footer">
-          <strong>Tổng: {total.toLocaleString()}đ</strong>
-          <div className="footer-buttons">
-            <button onClick={() => navigate("/staff/online-orders")}>
-              🛍️ Đơn mới
-            </button>
-            <button onClick={() => navigate("/staff/import-ingredients")}>
-              📦 Nhập kho
-            </button>
-            <button onClick={() => setShowChatModal(true)}>
-              💬 Tin nhắn
-            </button>
-            <button className="btn-pay">THANH TOÁN</button>
+        {/* BÊN PHẢI: CHI TIẾT PHIẾU (40%) */}
+        <div className="import-right">
+          <div className="info-box">
+            <div className="form-group">
+              <label>Nhà cung cấp:</label>
+              <input type="text" value={supplier} onChange={(e) => setSupplier(e.target.value)} placeholder="Tên NCC..." />
+            </div>
+            <div className="form-group">
+              <label>Ghi chú:</label>
+              <textarea value={note} onChange={(e) => setNote(e.target.value)} placeholder="Nội dung nhập..." />
+            </div>
+          </div>
+
+          <div className="table-wrapper">
+            <table className="import-table">
+              <thead>
+                <tr>
+                  <th>Tên hàng</th>
+                  <th width="60">SL</th>
+                  <th width="100">Giá nhập</th>
+                  <th width="90">Thành tiền</th>
+                  <th width="30"></th>
+                </tr>
+              </thead>
+              <tbody>
+                {importList.map(item => (
+                  <tr key={item.ingredient_id}>
+                    <td className="truncate">{item.name}</td>
+                    <td><input type="number" value={item.qty} onChange={(e) => updateItem(item.ingredient_id, "qty", e.target.value)} /></td>
+                    <td><input type="number" value={item.import_price} onChange={(e) => updateItem(item.ingredient_id, "import_price", e.target.value)} /></td>
+                    <td className="text-right">{(item.qty * item.import_price).toLocaleString()}đ</td>
+                    <td><button className="btn-del" onClick={() => removeItem(item.ingredient_id)}>×</button></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="import-summary">
+            <div className="sum-line"><span>Tổng số lượng:</span><span>{importList.reduce((s, i) => s + i.qty, 0)}</span></div>
+            <div className="sum-line"><span>Tạm tính:</span><span>{subTotal.toLocaleString()}đ</span></div>
+            <div className="sum-line"><span>VAT (8%):</span><span>{vat.toLocaleString()}đ</span></div>
+            <div className="sum-line total-price-row">
+                <span>TỔNG CỘNG:</span>
+                <span className="red-text">{total.toLocaleString()}đ</span>
+            </div>
+            {/* GÁN SỰ KIỆN HANDLE SAVE VÀO ĐÂY */}
+            <button className="btn-save-all" onClick={handleSave}>HOÀN THÀNH</button>
           </div>
         </div>
       </div>
 
-      {/* CHAT MODAL */}
-      {showChatModal && (
-        <div className="chat-modal-overlay">
-          <div className="chat-modal">
-            <div className="chat-header">
-              <h3>Tin nhắn khách hàng</h3>
-              <button onClick={() => setShowChatModal(false)}>×</button>
+      {/* MODAL THÊM MỚI */}
+      {showModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h3>Đăng ký nguyên liệu mới</h3>
+            <div className="form-group">
+              <label>Tên nguyên liệu:</label>
+              <input type="text" value={newIng.name} onChange={(e) => setNewIng({...newIng, name: e.target.value})} />
             </div>
-
-            <div className="chat-body">
-              <div className="chat-customer-list">
-                {customers.map(c => (
-                  <div
-                    key={c.id}
-                    className={`chat-customer ${
-                      selectedCustomerId === c.id ? "active" : ""
-                    }`}
-                    onClick={() => setSelectedCustomerId(c.id)}
-                  >
-                    <strong>{c.name}</strong>
-                    <span>{c.phone}</span>
-                  </div>
-                ))}
-              </div>
-
-              <div className="chat-box">
-                <div className="chat-messages" ref={scrollRef}>
-                  {(messages[selectedCustomerId] || []).map((m, i) => (
-                    <div key={i} className={`chat-msg ${m.type}`}>
-                      {m.text && <p>{m.text}</p>}
-                      {m.image_url && (
-                        <img
-                          src={`http://localhost:3003${m.image_url}`}
-                          alt=""
-                        />
-                      )}
-                      <span>{m.time}</span>
-                    </div>
-                  ))}
-                </div>
-
-                <form className="chat-input" onSubmit={handleReplyMessage}>
-                  <input
-                    value={inputMessage}
-                    onChange={e => setInputMessage(e.target.value)}
-                    placeholder="Nhập tin nhắn..."
-                  />
-                  <input type="file" ref={fileInputRef} hidden />
-                  <button type="submit">Gửi</button>
-                </form>
-              </div>
+            <div className="form-group">
+              <label>Đơn vị tính:</label>
+              <input type="text" value={newIng.unit} placeholder="Kg, Lít, Thùng..." onChange={(e) => setNewIng({...newIng, unit: e.target.value})} />
+            </div>
+            <div className="modal-btns">
+              <button className="btn-confirm" onClick={handleCreateNewIngredient}>Lưu & Thêm</button>
+              <button className="btn-close" onClick={() => setShowModal(false)}>Hủy</button>
             </div>
           </div>
         </div>

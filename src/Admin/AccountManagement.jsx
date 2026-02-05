@@ -1,186 +1,168 @@
 import React, { useState, useEffect } from "react";
-import { NavLink  } from "react-router-dom";
-import axios from "axios"; 
-import { getUsers } from "../api/Api"; 
-import "./Css/AccountManagement.css"; 
-
+import axios from "axios";
+import { getUsers } from "../api/Api";
+import "./Css/AccountManagement.css";
 
 function AccountManagement() {
-  // --- CÁC STATE QUẢN LÝ ---
   const [users, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [toast, setToast] = useState(null);
-  const [expandedUserId, setExpandedUserId] = useState(null); // Để mở chi tiết hàng
-  
-  // State quản lý Modal xác nhận (Hiển thị hồ sơ + Nhập lý do gửi mail)
+  const [expandedUserId, setExpandedUserId] = useState(null);
+
   const [confirmModal, setConfirmModal] = useState({
     show: false,
     user: null,
-    type: "", // "DELETE" hoặc "LOCK"
-    reason: ""
+    type: "", 
+    reason: "",
   });
+
+  const [formData, setFormData] = useState({ full_name: "", phone: "", address: "" });
+  const [selectedFile, setSelectedFile] = useState(null); 
+  const [previewUrl, setPreviewUrl] = useState(null);   
 
   const API_BASE = "http://localhost:3003";
 
-  // Tự động tải dữ liệu khi vào trang
-  useEffect(() => { 
-    fetchUsersData(); 
-  }, []);
+  useEffect(() => { fetchUsersData(); }, []);
 
-  // --- HÀM 1: HIỂN THỊ THÔNG BÁO (TOAST) ---
   const showToast = (message, type = "success") => {
     setToast({ message, type });
     setTimeout(() => setToast(null), 3000);
   };
 
-  // --- HÀM 2: LẤY DANH SÁCH NGƯỜI DÙNG TỪ API ---
   const fetchUsersData = async () => {
     try {
       const data = await getUsers();
       if (Array.isArray(data)) {
         setUsers(data.sort((a, b) => a.user_id - b.user_id));
       }
-    } catch (err) { 
+    } catch (err) {
       showToast("Lỗi tải danh sách người dùng", "error");
     }
   };
 
-  // --- HÀM 3: MỞ BẢNG XÁC NHẬN (XEM HỒ SƠ TRƯỚC KHI XÓA/KHÓA) ---
   const openConfirmModal = (user, type) => {
-    if (user.role_id === 1) return showToast("Không thể tác động tài khoản Admin!", "error");
-    setConfirmModal({
-      show: true,
-      user: user,
-      type: type,
-      reason: "" // Reset lý do trắng
-    });
+    if (user.role_id === 1 && type !== "EDIT") {
+      return showToast("Không thể tác động tài khoản Admin!", "error");
+    }
+    setConfirmModal({ show: true, user, type, reason: "" });
+    if (type === "EDIT") {
+      setFormData({ full_name: user.full_name || "", phone: user.phone || "", address: user.address || "" });
+      setPreviewUrl(user.avatar ? `${API_BASE}${user.avatar}` : null);
+      setSelectedFile(null);
+    }
   };
 
-  // --- HÀM 4: XỬ LÝ GỬI LỆNH (XÓA/KHÓA) + GỬI LÝ DO QUA MAIL ---
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setSelectedFile(file);
+      setPreviewUrl(URL.createObjectURL(file));
+    }
+  };
+
   const handleFinalAction = async () => {
     const { user, type, reason } = confirmModal;
-    
-    if (!reason.trim()) {
-      alert("Bạn phải nhập lý do để hệ thống gửi mail thông báo cho người dùng!");
+    if ((type === "DELETE" || type === "LOCK") && !reason.trim()) {
+      alert("Bạn phải nhập lý do để hệ thống gửi mail thông báo!");
       return;
     }
 
     try {
-      if (type === "DELETE") {
-        // Gửi lệnh xóa kèm lý do trong body (Sử dụng axios.delete với data)
-        const res = await axios.delete(`${API_BASE}/api/users/${user.user_id}`, {
-          data: { reason: reason }
+      if (type === "EDIT") {
+        const data = new FormData();
+        data.append("full_name", formData.full_name);
+        data.append("phone", formData.phone);
+        data.append("address", formData.address);
+        if (selectedFile) data.append("avatar", selectedFile);
+
+        const res = await axios.put(`${API_BASE}/api/users/update/${user.user_id}`, data, {
+          headers: { "Content-Type": "multipart/form-data" }
         });
-        if (res.data.success) showToast("🗑️ Đã xóa và gửi mail thông báo!");
+        if (res.data.success) showToast("📝 Cập nhật thành công!");
+      } 
+      else if (type === "DELETE") {
+        const res = await axios.delete(`${API_BASE}/api/users/${user.user_id}`, { data: { reason } });
+        if (res.data.success) showToast("🗑️ Đã xóa người dùng!");
       } 
       else if (type === "LOCK") {
-        const newRoleId = user.role_id === 0 ? 3 : 0; // Đổi trạng thái (0: khóa, 3: mở)
-        const res = await axios.put(`${API_BASE}/api/users/status/${user.user_id}`, {
-          role_id: newRoleId,
-          reason: reason
-        });
-        if (res.data.success) {
-          showToast(newRoleId === 0 ? "🔒 Đã khóa & gửi mail" : "🔓 Đã mở khóa & gửi mail");
-        }
+        const newRoleId = user.role_id === 0 ? 3 : 0; 
+        const res = await axios.put(`${API_BASE}/api/users/status/${user.user_id}`, { role_id: newRoleId, reason });
+        if (res.data.success) showToast(newRoleId === 0 ? "🔒 Đã khóa tài khoản" : "🔓 Đã mở khóa");
       }
 
-      // Đóng modal và làm mới danh sách
       setConfirmModal({ show: false, user: null, type: "", reason: "" });
       fetchUsersData();
     } catch (err) {
-      showToast("Lỗi: " + (err.response?.data?.message || "Thao tác thất bại"), "error");
+      showToast("Lỗi thao tác thất bại", "error");
     }
   };
 
-  // --- GIAO DIỆN ---
   return (
-    <div className="sakura-admin-layout">
+    <div className="account-mgmt-container">
       {toast && <div className={`sakura-toast ${toast.type}`}>{toast.message}</div>}
+      
+      <header className="mgmt-header">
+        <div className="header-title">
+          <h1>Quản lý tài khoản</h1>
+          <p>Danh sách nhân viên và khách hàng trong hệ thống</p>
+        </div>
+        <div className="search-bar">
+          <input
+            type="text"
+            placeholder="🔍 Tìm theo tên hoặc email..."
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+      </header>
 
-      <aside className="sakura-sidebar">
-        <div className="sidebar-brand">SAKURA ADMIN</div>
-        <nav className="sidebar-nav">
-          <NavLink  to="/admin/products" className="nav-item">📦 Thực đơn</NavLink >
-                             <NavLink  to="/admin/accounts" className="nav-item">👥 Tài khoản</NavLink >
-                             <NavLink  to="/admin/bookings" className="nav-item">📅 Đặt bàn</NavLink >
-                             <NavLink  to="/admin/orders" className="nav-item">📊 Lịch sử đơn</NavLink >
-                             <NavLink  to="/admin/purchases" className="nav-item">🚚 Nhập kho</NavLink >
-                             <NavLink  to="/admin/revenue" className="nav-item tab-active" style={{background: '#fce4ec', color: '#e91e63'}}>💰 Doanh số</NavLink >
-                             <NavLink  to="/admin/news/add" className="nav-item active">📝 Đăng tin tức</NavLink >
-                             <NavLink  to="/Home" className="nav-item">🏠 Trang chủ</NavLink >
-        </nav>
-      </aside>
-
-      <main className="sakura-main">
-        <header className="main-header">
-          <div className="header-left">
-            <h1>Quản lý người dùng</h1>
-            <p>Bấm vào người dùng để xem thông tin chi tiết</p>
-          </div>
-          <div className="search-wrapper">
-            <input 
-              type="text" 
-              placeholder="🔍 Tìm tên hoặc email..." 
-              onChange={(e) => setSearchTerm(e.target.value)} 
-            />
-          </div>
-        </header>
-
-        <div className="table-container">
-          <table className="modern-table">
-            <thead>
-              <tr>
-                <th width="80">ID</th>
-                <th>THÀNH VIÊN</th>
-                <th>VAI TRÒ</th>
-                <th style={{textAlign: 'right'}}>THAO TÁC</th>
-              </tr>
-            </thead>
-            <tbody>
-              {users.filter(u => u.full_name?.toLowerCase().includes(searchTerm.toLowerCase())).map((u) => (
+      <div className="modern-table-card">
+        <table className="account-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>THÀNH VIÊN</th>
+              <th>VAI TRÒ</th>
+              <th className="txt-right">THAO TÁC</th>
+            </tr>
+          </thead>
+          <tbody>
+            {users
+              .filter((u) => u.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) || u.email?.toLowerCase().includes(searchTerm.toLowerCase()))
+              .map((u) => (
                 <React.Fragment key={u.user_id}>
-                  {/* HÀNG CHÍNH (RÚT GỌN) */}
                   <tr 
-                    className={`main-row ${expandedUserId === u.user_id ? 'active' : ''} ${u.role_id === 0 ? 'is-locked' : ''}`}
+                    className={`user-row ${expandedUserId === u.user_id ? "expanded" : ""} ${u.role_id === 0 ? "locked" : ""}`}
                     onClick={() => setExpandedUserId(expandedUserId === u.user_id ? null : u.user_id)}
                   >
-                    <td className="txt-bold">#{u.user_id}</td>
+                    <td><strong>#{u.user_id}</strong></td>
                     <td>
-                      <div className="user-profile-summary">
-                        <div className="avatar-small">
-                          {u.avatar ? <img src={`${API_BASE}${u.avatar}`} alt="avt" /> : u.full_name?.charAt(0)}
+                      <div className="user-info-cell">
+                        <div className="avt-circle">
+                          {u.avatar ? <img src={`${API_BASE}${u.avatar}`} alt="" /> : u.full_name?.charAt(0)}
                         </div>
-                        <span className="name-text">{u.full_name}</span>
+                        <span>{u.full_name}</span>
                       </div>
                     </td>
                     <td>
-                      <span className={`role-badge role-${u.role_id}`}>
-                        {u.role_id === 1 ? 'ADMIN' : u.role_id === 0 ? 'BỊ KHÓA' : 'KHÁCH HÀNG'}
+                      <span className={`badge-role role-${u.role_id}`}>
+                        {u.role_id === 1 ? "Quản trị" : u.role_id === 0 ? "Bị khóa" : "Khách hàng"}
                       </span>
                     </td>
-                    <td onClick={(e) => e.stopPropagation()} style={{textAlign: 'right'}}>
-                       <button className="btn-action-lock" onClick={() => openConfirmModal(u, "LOCK")}>
-                          {u.role_id === 0 ? "🔓 Mở khóa" : "🔒 Khóa"}
-                       </button>
-                       <button className="btn-action-delete" onClick={() => openConfirmModal(u, "DELETE")}>🗑️ Xóa</button>
+                    <td className="txt-right" onClick={(e) => e.stopPropagation()}>
+                      <button className="btn-edit" onClick={() => openConfirmModal(u, "EDIT")}>Sửa</button>
+                      <button className="btn-lock" onClick={() => openConfirmModal(u, "LOCK")}>{u.role_id === 0 ? "Mở" : "Khóa"}</button>
+                      <button className="btn-delete" onClick={() => openConfirmModal(u, "DELETE")}>Xóa</button>
                     </td>
                   </tr>
-
-                  {/* HÀNG CHI TIẾT SỔ XUỐNG (ACCORDION) */}
                   {expandedUserId === u.user_id && (
-                    <tr className="detail-row">
+                    <tr className="expansion-row">
                       <td colSpan="4">
-                        <div className="detail-box-expand">
-                           <div className="detail-grid">
-                              <div className="detail-avt-large">
-                                 {u.avatar ? <img src={`${API_BASE}${u.avatar}`} alt="avt" /> : <div className="no-img">{u.full_name?.charAt(0)}</div>}
-                              </div>
-                              <div className="detail-info-list">
-                                 <p><strong>📧 Email:</strong> {u.email}</p>
-                                 <p><strong>📞 Điện thoại:</strong> {u.phone || "Chưa cập nhật"}</p>
-                                 <p><strong>📍 Địa chỉ:</strong> {u.address || "Chưa cập nhật"}</p>
-                                <p>Ngày đăng ký: {u.created_at ? new Date(u.created_at).toLocaleDateString('vi-VN') : "Chưa cập nhật"}</p>
-                              </div>
+                        <div className="expansion-content">
+                           <div className="info-grid">
+                              <div className="info-item"><strong>Email:</strong> {u.email}</div>
+                              <div className="info-item"><strong>SĐT:</strong> {u.phone || "---"}</div>
+                              <div className="info-item"><strong>Địa chỉ:</strong> {u.address || "---"}</div>
+                              <div className="info-item"><strong>Ngày tham gia:</strong> {new Date(u.created_at).toLocaleDateString("vi-VN")}</div>
                            </div>
                         </div>
                       </td>
@@ -188,51 +170,55 @@ function AccountManagement() {
                   )}
                 </React.Fragment>
               ))}
-            </tbody>
-          </table>
-        </div>
-      </main>
+          </tbody>
+        </table>
+      </div>
 
-      {/* MODAL XÁC NHẬN "XỊN" - XEM HỒ SƠ + NHẬP LÝ DO GỬI MAIL */}
+      {/* MODAL */}
       {confirmModal.show && (
-        <div className="modal-overlay">
-          <div className="modal-confirm-card">
-            <div className={`modal-confirm-header ${confirmModal.type}`}>
-              <h2>{confirmModal.type === "DELETE" ? "⚠️ XÁC NHẬN XÓA TÀI KHOẢN" : "🔔 THÔNG BÁO TÀI KHOẢN"}</h2>
-              <p>Hệ thống sẽ gửi mail lý do bạn nhập dưới đây cho khách hàng</p>
-            </div>
+        <div className="sakura-modal-overlay">
+          <div className="sakura-modal-content">
+            <div className={`modal-status-bar ${confirmModal.type}`}></div>
+            <div className="modal-inner">
+              <h3>{confirmModal.type === "EDIT" ? "Chỉnh sửa hồ sơ" : "Xác nhận hành động"}</h3>
+              
+              {confirmModal.type === "EDIT" ? (
+                <div className="edit-form">
+                   <div className="avatar-picker">
+                      <div className="preview">
+                        {previewUrl ? <img src={previewUrl} alt="" /> : <span>{formData.full_name[0]}</span>}
+                        <label htmlFor="file-up">📷</label>
+                      </div>
+                      <input type="file" id="file-up" hidden onChange={handleFileChange} />
+                   </div>
+                   <div className="form-group">
+                      <label>Họ tên</label>
+                      <input type="text" value={formData.full_name} onChange={(e)=>setFormData({...formData, full_name: e.target.value})} />
+                   </div>
+                   <div className="form-group">
+                      <label>Số điện thoại</label>
+                      <input type="text" value={formData.phone} onChange={(e)=>setFormData({...formData, phone: e.target.value})} />
+                   </div>
+                   <div className="form-group">
+                      <label>Địa chỉ</label>
+                      <textarea value={formData.address} onChange={(e)=>setFormData({...formData, address: e.target.value})}></textarea>
+                   </div>
+                </div>
+              ) : (
+                <div className="confirm-reason">
+                   <p>Bạn đang thao tác trên tài khoản <strong>{confirmModal.user.full_name}</strong></p>
+                   <textarea 
+                    placeholder="Lý do..." 
+                    value={confirmModal.reason} 
+                    onChange={(e)=>setConfirmModal({...confirmModal, reason: e.target.value})}
+                   />
+                </div>
+              )}
 
-            <div className="modal-confirm-body">
-              {/* Hiển thị Profile đầy đủ trong Modal */}
-              <div className="user-review-box">
-                 <div className="review-avt">
-                    {confirmModal.user.avatar ? 
-                      <img src={`${API_BASE}${confirmModal.user.avatar}`} alt="avt" /> : 
-                      <div className="review-no-avt">{confirmModal.user.full_name[0]}</div>
-                    }
-                 </div>
-                 <div className="review-data">
-                    <h3>{confirmModal.user.full_name}</h3>
-                    <span>ID: #{confirmModal.user.user_id} | {confirmModal.user.email}</span>
-                    <p>SĐT: {confirmModal.user.phone || "Chưa có"}</p>
-                    <p>Địa chỉ: {confirmModal.user.address || "Chưa có"}</p>
-                 </div>
+              <div className="modal-actions">
+                <button className="btn-save" onClick={handleFinalAction}>Đồng ý</button>
+                <button className="btn-close" onClick={() => setConfirmModal({ show: false })}>Hủy</button>
               </div>
-
-              <div className="reason-input-group">
-                <label>Lý do (Nội dung này sẽ gửi vào Email khách hàng):</label>
-                <textarea 
-                  rows="4"
-                  placeholder="Ví dụ: Tài khoản của bạn bị khóa do vi phạm chính sách thanh toán..."
-                  value={confirmModal.reason}
-                  onChange={(e) => setConfirmModal({...confirmModal, reason: e.target.value})}
-                ></textarea>
-              </div>
-            </div>
-
-            <div className="modal-confirm-footer">
-              <button className="btn-confirm-final" onClick={handleFinalAction}>Xác nhận & Gửi Mail</button>
-              <button className="btn-cancel-final" onClick={() => setConfirmModal({show: false})}>Quay lại</button>
             </div>
           </div>
         </div>

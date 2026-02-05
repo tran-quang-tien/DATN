@@ -1,117 +1,253 @@
-/* Container bao phủ toàn màn hình */
+/* ===== RESET ===== */
+* {
+  box-sizing: border-box;
+  font-family: "Segoe UI", Tahoma, sans-serif;
+}
+
+body {
+  margin: 0;
+  background: linear-gradient(135deg, #ffe6f0, #fff);
+}
+
+/* ===== WRAPPER ===== */
 .register-wrapper {
-  background: linear-gradient(135deg, #fff5f7 0%, #ffdeeb 100%);
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
-  font-family: 'Segoe UI', sans-serif;
+  padding: 40px 16px;
 }
 
-/* Cửa sổ đăng ký */
+/* ===== CARD ===== */
 .register-card {
   width: 100%;
-  max-width: 550px;
-  padding: 40px;
-  border-radius: 20px;
+  max-width: 620px;
   background: #fff;
-  box-shadow: 0 15px 35px rgba(255, 118, 117, 0.15);
-  border: 1px solid #ffdae9;
+  border-radius: 18px;
+  padding: 32px 36px;
+  box-shadow: 0 15px 40px rgba(233, 30, 99, 0.15);
+  animation: fadeUp 0.6s ease;
 }
 
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(25px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== TITLE ===== */
 .register-card h2 {
-  color: #ff7675;
   text-align: center;
-  margin-bottom: 30px;
-  font-size: 28px;
-  font-weight: 700;
+  margin-bottom: 20px;
+  color: #e91e63;
+  font-size: 1.9rem;
 }
 
-/* Layout chia cột */
+/* ===== ERROR ===== */
+.error-banner {
+  background: #ffe5ec;
+  color: #c2185b;
+  padding: 10px 14px;
+  border-radius: 10px;
+  margin-bottom: 16px;
+  font-size: 0.95rem;
+}
+
+/* ===== FORM GRID ===== */
 .form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 20px;
+  gap: 16px;
 }
 
 .full-column {
   grid-column: span 2;
 }
 
-/* Định dạng từng ô nhập liệu */
+/* ===== INPUT GROUP ===== */
 .input-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
   position: relative;
 }
 
 .input-group label {
-  font-weight: 600;
-  color: #636e72;
-  font-size: 14px;
-  margin-left: 5px;
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 6px;
 }
 
 .input-group input {
-  padding: 12px 15px;
+  padding: 12px 14px;
   border-radius: 12px;
-  border: 2px solid #f1f2f6;
-  background: #f9f9f9;
-  transition: all 0.3s ease;
-  font-size: 15px;
+  border: 1.5px solid #ddd;
+  font-size: 0.95rem;
+  transition: 0.25s;
 }
 
 .input-group input:focus {
   outline: none;
-  border-color: #ff7675;
-  background: #fff;
-  box-shadow: 0 0 8px rgba(255, 118, 117, 0.1);
+  border-color: #e91e63;
+  box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.15);
 }
 
-/* Icon ẩn/hiện mật khẩu */
+/* ===== TOGGLE PASSWORD ===== */
 .toggle-password {
   position: absolute;
-  right: 15px;
+  right: 14px;
   top: 38px;
   cursor: pointer;
-  font-size: 18px;
-  color: #b2bec3;
+  font-size: 1.1rem;
+  user-select: none;
+  transition: transform 0.2s;
 }
 
-/* Nút bấm */
-.btn-register-submit {
-  width: 100%;
-  margin-top: 30px;
-  padding: 15px;
-  border-radius: 30px;
+.toggle-password:hover {
+  transform: scale(1.15);
+}
+
+/* ===== ACTION BUTTONS ===== */
+.register-actions {
+  display: flex;
+  gap: 14px;
+  margin-top: 24px;
+}
+
+.register-actions button {
+  flex: 1;
+  padding: 14px 10px;
+  border-radius: 14px;
   border: none;
-  background: #ff7675;
-  color: #fff;
-  font-size: 17px;
+  font-size: 0.95rem;
   font-weight: bold;
   cursor: pointer;
-  transition: 0.3s;
+  transition: 0.25s;
 }
 
-.btn-register-submit:hover {
-  background: #d81b60;
+/* PHONE BUTTON */
+.btn-otp-phone {
+  background: linear-gradient(135deg, #ff5f9e, #e91e63);
+  color: #fff;
+  box-shadow: 0 6px 18px rgba(233, 30, 99, 0.35);
+}
+
+.btn-otp-phone:hover {
   transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(216, 27, 96, 0.3);
+  opacity: 0.95;
 }
 
-.btn-register-submit:disabled {
-  background: #fab1a0;
+/* EMAIL BUTTON */
+.btn-otp-email {
+  background: #fff;
+  color: #e91e63;
+  border: 2px solid #e91e63;
+}
+
+.btn-otp-email:hover {
+  background: #ffe6f0;
+  transform: translateY(-2px);
+}
+
+/* DISABLED */
+.register-actions button:disabled {
+  opacity: 0.6;
   cursor: not-allowed;
 }
 
-/* Responsive cho điện thoại */
-@media (max-width: 500px) {
+/* ===== LOGIN LINK ===== */
+.login-link-text {
+  margin-top: 22px;
+  text-align: center;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.login-link-text span {
+  color: #e91e63;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.login-link-text span:hover {
+  text-decoration: underline;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 600px) {
   .form-grid {
     grid-template-columns: 1fr;
   }
+
   .full-column {
     grid-column: span 1;
   }
+
+  .register-card {
+    padding: 26px 22px;
+  }
+}
+/* Container lựa chọn phương thức */
+.method-selection {
+  margin: 20px 0;
+  text-align: left;
+}
+
+.method-label {
+  font-weight: 600;
+  font-size: 14px;
+  color: #2d3436;
+  margin-bottom: 10px;
+}
+
+.method-group {
+  display: flex;
+  gap: 15px;
+}
+
+.method-btn {
+  flex: 1;
+  padding: 12px;
+  text-align: center;
+  border: 2px solid #dfe6e9;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 14px;
+  color: #636e72;
+}
+
+.method-btn:hover {
+  border-color: #ff7675;
+}
+
+.method-btn.active {
+  background: #fff5f5;
+  border-color: #ff7675;
+  color: #ff7675;
+  font-weight: bold;
+  box-shadow: 0 4px 10px rgba(255, 118, 117, 0.1);
+}
+
+/* Nút Submit chính */
+.btn-register-submit {
+  width: 100%;
+  padding: 15px;
+  background: linear-gradient(135deg, #ff7675, #d63031);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(214, 48, 49, 0.3);
+  transition: transform 0.2s;
+}
+
+.btn-register-submit:active {
+  transform: scale(0.98);
 }

@@ -8,13 +8,14 @@ export default function Booking() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(false);
   
-  // Trạng thái thông báo (Box tự biến mất)
+  // Trạng thái thông báo (Toast)
   const [notification, setNotification] = useState({ 
     show: false, 
     message: "", 
     type: "" 
   });
 
+  // State lưu trữ dữ liệu form - Giữ nguyên các trường của bạn
   const [formData, setFormData] = useState({
     customer_name: "",
     email: "", 
@@ -26,24 +27,24 @@ export default function Booking() {
     status: "Chờ xác nhận"
   });
 
-  // Hàm điều khiển Toast
+  // Hàm hiển thị Toast thông báo
   const showToast = (msg, type = "success") => {
     setNotification({ show: true, message: msg, type: type });
-    // Tự động ẩn sau 3 giây
     setTimeout(() => {
       setNotification({ show: false, message: "", type: "" });
     }, 3000);
   };
 
-  // Kiểm tra session và tự động điền thông tin user
+  // Lấy thông tin user từ session khi trang web load
   useEffect(() => {
     const session = sessionStorage.getItem("user_session");
     if (session) {
       const userData = JSON.parse(session);
       setUser(userData);
+      // Tự động điền thông tin thành viên vào form
       setFormData(prev => ({
         ...prev,
-        customer_name: userData.full_name || "",
+        customer_name: userData.full_name || userData.name || "",
         phone: userData.phone || "",
         email: userData.email || "" 
       }));
@@ -57,38 +58,41 @@ export default function Booking() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
     if (!user) {
-      showToast("Vui lòng đăng nhập để đặt bàn!", "error");
-      return;
+        showToast("Vui lòng đăng nhập để đặt bàn!", "error");
+        return;
     }
 
     setLoading(true);
-
     try {
-      const response = await createBooking(formData);
-      
-      if (response.success) {
-        showToast("🌸 Đặt bàn thành công! Email xác nhận đã được gửi.", "success");
-        // Reset form sau khi thành công
-        setFormData(prev => ({
-          ...prev,
-          booking_date: "",
-          booking_time: "",
-          number_of_people: 1,
-          note: ""
-        }));
-      } else {
-        showToast(response.message || "Không thể đặt bàn lúc này", "error");
-      }
+        // Gửi toàn bộ formData kèm theo user_id lấy từ session
+        const response = await createBooking({ 
+            ...formData, 
+            user_id: user.id 
+        });
+        
+        if (response.success) {
+            showToast("🌸 Đặt bàn thành công! Chúng tôi sẽ sớm liên hệ xác nhận.", "success");
+            
+            // Reset các trường không cố định sau khi đặt thành công
+            setFormData(prev => ({
+                ...prev,
+                booking_date: "",
+                booking_time: "",
+                number_of_people: 1,
+                note: ""
+            }));
+        } else {
+            showToast(response.message || "Có lỗi xảy ra!", "error");
+        }
     } catch (error) {
-      console.error("Lỗi:", error);
-      showToast("Lỗi kết nối máy chủ. Vui lòng thử lại.", "error");
+        showToast("Lỗi kết nối máy chủ, vui lòng thử lại sau!", "error");
     } finally {
-      setLoading(false);
+        setLoading(false);
     }
   };
 
+  // Nếu chưa đăng nhập, hiển thị thông báo yêu cầu
   if (!user) {
     return (
       <div className="booking-auth-notice">
@@ -105,7 +109,7 @@ export default function Booking() {
 
   return (
     <div className="booking-page">
-      {/* Box thông báo hiện lên rồi tự ẩn */}
+      {/* Toast Notification */}
       {notification.show && (
         <div className={`toast-notification ${notification.type}`}>
           {notification.type === "success" ? "✅ " : "❌ "}
@@ -116,7 +120,7 @@ export default function Booking() {
       <div className="booking-container">
         <div className="booking-header">
           <h1>Thông Tin Đặt Bàn Online</h1>
-          <p>Vui lòng đặt bàn trước giờ dùng bữa ít nhất 1 giờ</p>
+          <p>Vui lòng đặt bàn trước giờ dùng bữa ít nhất 1 giờ để chúng tôi phục vụ tốt nhất</p>
         </div>
 
         <form onSubmit={handleSubmit} className="booking-form">
@@ -128,7 +132,7 @@ export default function Booking() {
                 name="customer_name" 
                 value={formData.customer_name} 
                 onChange={handleChange}
-                placeholder="Nhập họ tên"
+                placeholder="Nhập họ và tên của bạn"
                 required 
               />
             </div>
@@ -138,8 +142,8 @@ export default function Booking() {
                 type="text" 
                 name="phone" 
                 value={formData.phone} 
-                onChange={handleChange}
-                placeholder="Nhập số điện thoại"
+                onChange={handleChange} 
+                placeholder="Số điện thoại liên lạc"
                 required 
               />
             </div>
@@ -152,8 +156,8 @@ export default function Booking() {
                   type="email" 
                   name="email" 
                   value={formData.email} 
-                  onChange={handleChange}
-                  placeholder="Email để nhận thông báo xác nhận/hủy bàn"
+                  onChange={handleChange} 
+                  placeholder="Email để nhận thông tin xác nhận"
                   required 
                 />
               </div>
@@ -165,7 +169,7 @@ export default function Booking() {
               <input 
                 type="date" 
                 name="booking_date" 
-                value={formData.booking_date}
+                value={formData.booking_date} 
                 required 
                 onChange={handleChange} 
               />
@@ -175,7 +179,7 @@ export default function Booking() {
               <input 
                 type="time" 
                 name="booking_time" 
-                value={formData.booking_time}
+                value={formData.booking_time} 
                 required 
                 onChange={handleChange} 
               />
@@ -186,9 +190,10 @@ export default function Booking() {
                 type="number" 
                 name="number_of_people" 
                 min="1" 
+                max="20"
                 value={formData.number_of_people} 
                 onChange={handleChange} 
-                required
+                required 
               />
             </div>
           </div>
@@ -198,9 +203,9 @@ export default function Booking() {
             <textarea 
               name="note" 
               rows="4" 
-              value={formData.note}
-              placeholder="Ví dụ: Bàn gần cửa sổ, tổ chức sinh nhật..." 
+              value={formData.note} 
               onChange={handleChange}
+              placeholder="Ví dụ: Bàn gần cửa sổ, kỷ niệm ngày cưới, có trẻ em..." 
             ></textarea>
           </div>
 

@@ -1,21 +1,35 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import "./css/Register.css"; // Đã đổi sang file CSS mới
-import { registerUser } from "../api/Api"; 
+import { checkRegisterInfo, sendEmailOTP } from "../api/Api"; 
+import { auth } from "./Fire/firebase.JS";
+import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
+import "./css/Register.css"; 
 
-function Register() {
-  const [formData, setFormData] = useState({
-    full_name: "", email: "", phone: "", address: "", password: "", confirmPassword: ""
-  });
-  const [showPass, setShowPass] = useState(false);
-  const [errorMsg, setErrorMsg] = useState("");
-  const [loading, setLoading] = useState(false);
+export default function Register() {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+  const [showPass, setShowPass] = useState(false);
+  const [verifyMethod, setVerifyMethod] = useState("EMAIL"); 
+  
+  const [formData, setFormData] = useState({
+    full_name: "", email: "", phone: "", address: "", password: "", confirmPassword: "",role_id: 3
+  });
+
+  useEffect(() => {
+    console.log("--- Khởi tạo Recaptcha ---");
+    if (!window.recaptchaVerifier) {
+      window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', { 
+        'size': 'invisible' 
+      });
+    }
+  }, []);
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault(); 
+    console.log("1. Đã chặn Load trang (e.preventDefault)");
     setErrorMsg("");
-    
+
     if (formData.password !== formData.confirmPassword) {
       setErrorMsg("Mật khẩu xác nhận không khớp!");
       return;
@@ -23,21 +37,46 @@ function Register() {
 
     setLoading(true);
     try {
-      // Gửi dữ liệu đầy đủ bao gồm cả address
-      const response = await registerUser({
-        full_name: formData.full_name,
-        email: formData.email,
-        password: formData.password,
-        phone: formData.phone,
-        address: formData.address, 
-        role_id: 3 
+      console.log("2. Đang kiểm tra Email/SĐT có trùng không...");
+      await checkRegisterInfo({ 
+        phone: formData.phone, 
+        email: formData.email 
       });
+      console.log("3. Kiểm tra thông tin OK (Không trùng)");
 
-      if (response.success) {
-        navigate("/verify-email", { state: { email: formData.email } });
+      if (verifyMethod === "PHONE") {
+        console.log("4a. Bắt đầu luồng PHONE qua Firebase...");
+        let phoneFix = formData.phone.trim();
+        if (phoneFix.startsWith('0')) {
+          phoneFix = '+84' + phoneFix.substring(1);
+        }
+
+        const confirmation = await signInWithPhoneNumber(auth, phoneFix, window.recaptchaVerifier);
+        window.confirmationResult = confirmation;
+        
+        console.log("5a. Firebase gửi SMS thành công. Chuẩn bị Navigate...");
+        navigate("/verify-email", { 
+          state: { type: "PHONE", target: formData.phone, userData: formData } 
+        });
+
+      } else {
+        console.log("4b. Bắt đầu luồng EMAIL qua Backend...");
+        const res = await sendEmailOTP({ email: formData.email });
+        
+        console.log("5b. Kết quả API gửi Email:", res);
+        if (res.success) {
+          console.log("6b. Gửi Mail thành công. Chuẩn bị Navigate...");
+          navigate("/verify-email", { 
+            state: { type: "EMAIL", target: formData.email, userData: formData } 
+          });
+        }
       }
     } catch (error) {
-      setErrorMsg(error.message || "Đăng ký thất bại!");
+      console.error("❌ LỖI TẠI ĐÂY:", error);
+      const msg = error.response?.data?.message || "Lỗi hệ thống hoặc thông tin đã tồn tại!";
+      setErrorMsg(msg);
+      
+      // Nếu có lỗi, chúng ta không Navigate, tránh bị văng trang
     } finally {
       setLoading(false);
     }
@@ -45,62 +84,58 @@ function Register() {
 
   return (
     <div className="register-wrapper">
+      <div id="recaptcha-container"></div>
       <div className="register-card">
-        <h2>Tạo tài khoản mới 🌸</h2>
+        <h2 className="register-title">Tạo tài khoản mới 🌸</h2>
         
-        {errorMsg && (
-          <div style={{ background: '#ffeaea', color: '#d63031', padding: '12px', borderRadius: '10px', marginBottom: '20px', border: '1px solid #fab1a0', textAlign: 'center', fontSize: '14px' }}>
-            ⚠️ {errorMsg}
-          </div>
-        )}
+        {errorMsg && <div className="error-banner" style={{color: 'red', padding: '10px', background: '#ffeeee'}}>⚠️ {errorMsg}</div>}
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="register-form">
           <div className="form-grid">
             <div className="input-group full-column">
               <label>Họ và tên</label>
-              <input type="text" placeholder="Nhập họ tên đầy đủ" onChange={(e) => setFormData({...formData, full_name: e.target.value})} required />
+              <input type="text" value={formData.full_name} onChange={e => setFormData({...formData, full_name: e.target.value})} required />
             </div>
 
             <div className="input-group">
               <label>Email</label>
-              <input type="email" placeholder="example@gmail.com" onChange={(e) => setFormData({...formData, email: e.target.value})} required />
+              <input type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} required />
             </div>
 
             <div className="input-group">
               <label>Số điện thoại</label>
-              <input type="text" placeholder="09xxxxxxx" onChange={(e) => setFormData({...formData, phone: e.target.value})} required />
+              <input type="tel" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} required />
             </div>
 
             <div className="input-group full-column">
               <label>Địa chỉ</label>
-              <input type="text" placeholder="Nhập địa chỉ nhà..." onChange={(e) => setFormData({...formData, address: e.target.value})} required />
+              <input type="text" value={formData.address} onChange={e => setFormData({...formData, address: e.target.value})} required />
             </div>
 
             <div className="input-group">
               <label>Mật khẩu</label>
-              <input type={showPass ? "text" : "password"} placeholder="••••••••" onChange={(e) => setFormData({...formData, password: e.target.value})} required />
-              <span className="toggle-password" onClick={() => setShowPass(!showPass)}>
-                {showPass ? "👁️" : "🙈"}
-              </span>
+              <input type={showPass ? "text" : "password"} value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} required />
             </div>
 
             <div className="input-group">
               <label>Xác nhận lại</label>
-              <input type={showPass ? "text" : "password"} placeholder="••••••••" onChange={(e) => setFormData({...formData, confirmPassword: e.target.value})} required />
+              <input type={showPass ? "text" : "password"} value={formData.confirmPassword} onChange={e => setFormData({...formData, confirmPassword: e.target.value})} required />
+            </div>
+          </div>
+
+          <div className="method-selection">
+            <p>Nhận mã qua:</p>
+            <div style={{display: 'flex', gap: '10px'}}>
+               <button type="button" onClick={() => setVerifyMethod('EMAIL')} style={{background: verifyMethod === 'EMAIL' ? 'pink' : '#eee'}}>Email</button>
+               <button type="button" onClick={() => setVerifyMethod('PHONE')} style={{background: verifyMethod === 'PHONE' ? 'pink' : '#eee'}}>SĐT</button>
             </div>
           </div>
 
           <button type="submit" className="btn-register-submit" disabled={loading}>
-            {loading ? "Đang xử lý..." : "Đăng ký ngay"}
+            {loading ? "Đang xử lý..." : "ĐĂNG KÝ NGAY"}
           </button>
         </form>
-        
-        <p style={{ textAlign: "center", marginTop: "20px", color: "#636e72", fontSize: "14px" }}>
-          Đã có tài khoản? <span onClick={() => navigate("/Login")} style={{ color: "#ff7675", cursor: "pointer", fontWeight: "bold" }}>Đăng nhập ngay</span>
-        </p>
       </div>
     </div>
   );
 }
-
-export default Register;

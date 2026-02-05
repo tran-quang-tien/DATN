@@ -6,7 +6,6 @@ export default function Checkout() {
   const navigate = useNavigate();
   const [cart] = useState(JSON.parse(localStorage.getItem("sakura_cart")) || []);
   
-  // State quản lý thông tin khách hàng và ghi chú
   const [info, setInfo] = useState({
     name: "",
     phone: "",
@@ -14,30 +13,30 @@ export default function Checkout() {
     note: "" 
   });
 
-  // State quản lý Box thông báo tự động
   const [toast, setToast] = useState({ show: false, message: "", type: "" });
 
   useEffect(() => {
     const rawData = sessionStorage.getItem("user_session");
     if (rawData) {
       const userData = JSON.parse(rawData);
-      setInfo({
-        name: userData.full_name || "", 
-        phone: userData.phone || "",
-        address: userData.address || "",
-        note: ""
-      });
+      // Tự động điền thông tin mặc định để khách dễ chỉnh sửa
+      setInfo(prev => ({
+        ...prev,
+        name: userData.name || "", 
+        phone: userData.phone || "", 
+        address: userData.address || "" 
+      }));
     }
-  }, []);
+    if (cart.length === 0) navigate("/menu");
+  }, [navigate, cart.length]);
 
   const totalAmount = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
-  // Hàm hiển thị Box thông báo và tự động ẩn
   const showToast = (msg, type = "success") => {
     setToast({ show: true, message: msg, type: type });
     setTimeout(() => {
       setToast({ show: false, message: "", type: "" });
-      if (type === "success") navigate("/menu"); // Nếu thành công thì chuyển trang sau khi ẩn box
+      if (type === "success") navigate("/menu"); 
     }, 2500); 
   };
 
@@ -48,12 +47,15 @@ export default function Checkout() {
     }
 
     const userData = JSON.parse(sessionStorage.getItem("user_session"));
-    
+
     const orderData = {
-      user_id: userData?.user_id || null,
+      user_id: userData?.id || null, 
+      customer_name: info.name,
+      customer_phone: info.phone,
+      shipping_address: info.address,
       total_amount: totalAmount,
       payment_method: "COD - Tiền mặt",
-      note: info.note || "Khách đặt Online", // Gửi note vào database
+      note: info.note || "Khách đặt Online",
       cartItems: cart 
     };
 
@@ -67,19 +69,19 @@ export default function Checkout() {
       const data = await res.json();
       
       if (data.success) {
+        // Đã xóa phần cập nhật sessionStorage để không ghi đè địa chỉ gốc của khách
         localStorage.removeItem("sakura_cart");
         showToast("🎉 Đặt hàng thành công! Đang quay lại Menu...");
       } else {
-        showToast("❌ Lỗi: " + data.error, "error");
+        showToast("❌ Lỗi: " + (data.error || "Không thể đặt hàng"), "error");
       }
     } catch (error) {
-      showToast("❌ Không thể kết nối đến máy chủ!", "error");
+      showToast("❌ Lỗi kết nối server!", "error");
     }
   };
 
   return (
     <div className="checkout-wrapper">
-      {/* BOX THÔNG BÁO TỰ ĐỘNG */}
       {toast.show && (
         <div className={`checkout-toast ${toast.type}`}>
           {toast.message}
@@ -97,37 +99,37 @@ export default function Checkout() {
                 type="text" className="checkout-input" 
                 value={info.name}
                 onChange={(e) => setInfo({...info, name: e.target.value})}
-                placeholder="Tên khách hàng..."
+                placeholder="Nhập tên người nhận (có thể khác chủ tài khoản)..."
               />
             </div>
 
             <div className="checkout-group">
-              <label>Số điện thoại</label>
+              <label>Số điện thoại nhận hàng</label>
               <input 
                 type="text" className="checkout-input" 
                 value={info.phone}
                 onChange={(e) => setInfo({...info, phone: e.target.value})}
-                placeholder="Số điện thoại..."
+                placeholder="Nhập SĐT người nhận..."
               />
             </div>
 
             <div className="checkout-group">
-              <label>Địa chỉ chi tiết</label>
+              <label>Địa chỉ giao hàng</label>
               <textarea 
                 className="checkout-input" rows="2"
                 value={info.address}
                 onChange={(e) => setInfo({...info, address: e.target.value})}
-                placeholder="Số nhà, tên đường..."
+                placeholder="Địa chỉ giao hàng cho đơn này..."
               ></textarea>
             </div>
 
             <div className="checkout-group">
-              <label>Ghi chú đơn hàng</label>
+              <label>Ghi chú</label>
               <textarea 
                 className="checkout-input note-input" rows="2"
                 value={info.note}
                 onChange={(e) => setInfo({...info, note: e.target.value})}
-                placeholder="Ví dụ: Ít đường, giao trước 10h..."
+                placeholder="Ví dụ: Giao cho bảo vệ, Ít đá..."
               ></textarea>
             </div>
           </div>
@@ -146,7 +148,6 @@ export default function Checkout() {
               <span>TỔNG CỘNG:</span>
               <span className="total-price">{totalAmount.toLocaleString()}đ</span>
             </div>
-            <p className="cod-badge">📍 Thanh toán tiền khi nhận hàng</p>
           </div>
         </div>
 

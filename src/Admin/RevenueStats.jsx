@@ -1,15 +1,28 @@
 import React, { useState, useEffect } from "react";
-import { NavLink  } from "react-router-dom";
-import { Bar } from "react-chartjs-2";
-import { Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell, WidthType, AlignmentType } from "docx";
+import { Line, Bar } from "react-chartjs-2"; 
+import { Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell, WidthType, AlignmentType, BorderStyle } from "docx";
 import { saveAs } from "file-saver";
 import { toast, ToastContainer } from "react-toastify";
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from "chart.js";
+import { 
+    Chart as ChartJS, 
+    CategoryScale, 
+    LinearScale, 
+    PointElement, 
+    LineElement, 
+    BarElement, 
+    Title, 
+    Tooltip, 
+    Legend,
+    Filler 
+} from "chart.js";
 
-import "./Css/AdminOrderHistory.css";
 import "./Css/RevenueStats.css";
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+ChartJS.register(
+    CategoryScale, LinearScale, PointElement, LineElement, 
+    BarElement, Title, Tooltip, Legend, Filler 
+);
+
 const API_BASE = "http://localhost:3003";
 
 export default function RevenueStats() {
@@ -54,7 +67,7 @@ export default function RevenueStats() {
     const previewWord = async () => {
         const { start, end } = buildDateRange();
         if (!start || (viewMode === "monthly" && !end)) {
-            toast.warn("Vui lòng chọn đủ thời gian!");
+            toast.warn("Vui lòng chọn đủ khoảng thời gian!");
             return;
         }
         setRangeInfo({ start, end });
@@ -66,7 +79,20 @@ export default function RevenueStats() {
         } catch (e) { toast.error("Lỗi lấy dữ liệu báo cáo"); }
     };
 
-    const formatVND = (val) => (val || 0).toLocaleString() + " đ";
+    const formatVND = (val) => (val || 0).toLocaleString("vi-VN") + " đ";
+
+    const renderRow = (c1, c2, bold = false) => new TableRow({
+        children: [
+            new TableCell({ 
+                padding: { top: 100, bottom: 100, left: 100 },
+                children: [new Paragraph({ children: [new TextRun({ text: c1, bold, size: 24 })] })] 
+            }),
+            new TableCell({ 
+                padding: { top: 100, bottom: 100, right: 100 },
+                children: [new Paragraph({ alignment: AlignmentType.RIGHT, children: [new TextRun({ text: c2, bold, size: 24, color: bold ? "E91E63" : "000000" })] })] 
+            }),
+        ]
+    });
 
     const exportToWord = async () => {
         if (!profitSummary) return;
@@ -75,129 +101,119 @@ export default function RevenueStats() {
             const doc = new Document({
                 sections: [{
                     children: [
-                        new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ text: "SAKURA CAFE", bold: true, size: 32, color: "E91E63" })] }),
+                        new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ text: "SAKURA CAFE", bold: true, size: 36, color: "E91E63" })] }),
                         new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 400 }, children: [new TextRun({ text: "BÁO CÁO DOANH THU & LỢI NHUẬN", bold: true, size: 28 })] }),
-                        new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 200 }, children: [new TextRun({ text: `Thời gian: ${rangeInfo.start} đến ${rangeInfo.end}`, italics: true })] }),
+                        new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 300 }, children: [new TextRun({ text: `Thời gian: ${rangeInfo.start} đến ${rangeInfo.end}`, italics: true, size: 22 })] }),
                         new Table({
                             width: { size: 100, type: WidthType.PERCENTAGE },
                             rows: [
                                 renderRow("HẠNG MỤC", "GIÁ TRỊ", true),
-                                renderRow(`Doanh thu Online (${s.online_count} cốc/đơn)`, formatVND(s.online_money)),
-                                renderRow(`Doanh thu Offline (${s.offline_count} cốc/đơn)`, formatVND(s.offline_money)),
-                                renderRow("TỔNG DOANH THU THÁNG", formatVND(s.gross_revenue), true),
-                                renderRow("Chiết khấu (5%)", "-" + formatVND(s.discount)),
+                                renderRow(`Doanh thu Online (${s.online_count} đơn)`, formatVND(s.online_money)),
+                                renderRow(`Doanh thu Trực tiếp (${s.offline_count} đơn)`, formatVND(s.offline_money)),
+                                renderRow("TỔNG DOANH THU", formatVND(s.gross_revenue), true),
+                                renderRow("Chiết khấu & Ưu đãi", "-" + formatVND(s.discount)),
                                 renderRow("Thuế VAT (8%)", "-" + formatVND(s.tax)),
-                                renderRow("Chi phí nhập hàng (Mua đồ)", "-" + formatVND(s.total_import)),
-                                renderRow("DOANH THU THỰC TẾ", formatVND(s.profit), true),
+                                renderRow("Chi phí nguyên liệu (Nhập hàng)", "-" + formatVND(s.total_import)),
+                                renderRow("LỢI NHUẬN THỰC TẾ", formatVND(s.profit), true),
                             ]
-                        })
+                        }),
+                        new Paragraph({ spacing: { before: 500 }, alignment: AlignmentType.RIGHT, children: [new TextRun({ text: `Ngày lập báo cáo: ${new Date().toLocaleDateString("vi-VN")}`, italics: true })] })
                     ]
                 }]
             });
             const blob = await Packer.toBlob(doc);
-            saveAs(blob, `Sakura_Report_${rangeInfo.start}.docx`);
-            toast.success("Xuất Word thành công!");
-        } catch (e) { toast.error("Lỗi khi xuất file"); }
+            saveAs(blob, `Bao_Cao_Sakura_${rangeInfo.start}.docx`);
+            toast.success("Đã xuất file Word!");
+            setShowPreview(false);
+        } catch (e) { toast.error("Lỗi xuất file"); }
     };
 
-    const renderRow = (c1, c2, bold = false) => new TableRow({
-        children: [
-            new TableCell({ children: [new Paragraph({ children: [new TextRun({ text: c1, bold })] })] }),
-            new TableCell({ children: [new Paragraph({ alignment: AlignmentType.RIGHT, children: [new TextRun({ text: c2, bold })] })] }),
-        ]
-    });
-
+    const activeData = viewMode === "daily" ? dailyData : monthlyData;
     const chartData = {
-        labels: viewMode === "daily" ? dailyData.map(r => r.order_date) : monthlyData.map(r => `${r.month}/${r.year}`),
+        labels: viewMode === "daily" ? activeData.map(r => `${r.hour}h`) : activeData.map(r => `${r.month}/${r.year}`),
         datasets: [
-            { label: "Online", data: (viewMode === "daily" ? dailyData : monthlyData).map(r => r.total_online), backgroundColor: "#f48fb1" },
-            { label: "Offline", data: (viewMode === "daily" ? dailyData : monthlyData).map(r => r.total_offline), backgroundColor: "#4db6ac" },
+            { 
+                label: "Online", 
+                data: activeData.map(r => r.total_online), 
+                borderColor: "#e91e63", 
+                backgroundColor: "rgba(233, 30, 99, 0.2)", 
+                tension: 0.4, fill: true 
+            },
+            { 
+                label: "Trực tiếp", 
+                data: activeData.map(r => r.total_offline), 
+                borderColor: "#009688", 
+                backgroundColor: "rgba(0, 150, 136, 0.2)", 
+                tension: 0.4, fill: true 
+            },
         ],
     };
 
     return (
-        <div className="sakura-admin-layout">
-            <ToastContainer />
-            <aside className="sakura-sidebar">
-                <div className="sidebar-brand">SAKURA ADMIN</div>
-                <nav className="sidebar-nav">
-                    <NavLink to="/admin/products" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>📦 Thực đơn</NavLink>
-                    <NavLink to="/admin/accounts" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>👥 Tài khoản </NavLink>
-                    <NavLink to="/admin/bookings" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>  📅 Đặt bàn</NavLink>
-                    <NavLink to="/admin/orders" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>   📊 Lịch sử đơn </NavLink>
-                    <NavLink to="/admin/purchases" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}> 🚚 Nhập kho</NavLink>
-                    <NavLink to="/admin/revenue" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>💰 Doanh số</NavLink>
-                    <NavLink to="/admin/news/add" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>📝 Đăng tin tức</NavLink>
-                    <NavLink to="/Home" className="nav-item"> 🏠 Trang chủ </NavLink>
-                </nav>
-             </aside>
-
-
-            <main className="sakura-main">
-                <div className="main-header" style={{display:'flex', justifyContent:'space-between', marginBottom: '20px'}}>
-                    <div>
-                        <h1 style={{color: '#e91e63', fontSize: '24px'}}>Thống kê doanh thu</h1>
-                        <p style={{color: '#666'}}>Quản lý số liệu Sakura Cafe</p>
-                    </div>
-                    <button className="btn-add-pink" onClick={previewWord} style={{backgroundColor: '#e91e63', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '8px', cursor: 'pointer'}}>
-                        📝 Xem & Xuất Word
-                    </button>
+        <div className="revenue-stats-wrapper">
+            <ToastContainer position="top-right" autoClose={2000} />
+            
+            <header className="stats-header">
+                <div className="header-text">
+                    <h1>📊 Thống kê Doanh thu</h1>
+                    <p>Phân tích hiệu quả kinh doanh Sakura Cafe</p>
                 </div>
+                <button className="btn-export-word" onClick={previewWord}>
+                    📝 Xuất Báo Cáo Word
+                </button>
+            </header>
 
-                <div className="filter-container-sakura">
-                    <div className="filter-tabs">
-                        <button className={viewMode === "daily" ? "tab-active" : ""} onClick={() => setViewMode("daily")}>Ngày</button>
-                        <button className={viewMode === "monthly" ? "tab-active" : ""} onClick={() => setViewMode("monthly")}>Tháng</button>
-                    </div>
-                    <div className="filter-dates">
-                        {viewMode === "daily" ? (
-                            <input type="date" value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)} />
-                        ) : (
-                            <>
-                                <input type="month" value={startMonth} onChange={(e) => setStartMonth(e.target.value)} />
-                                <span>đến</span>
-                                <input type="month" value={endMonth} onChange={(e) => setEndMonth(e.target.value)} />
-                            </>
-                        )}
-                    </div>
+            <div className="stats-filter-bar">
+                <div className="mode-tabs">
+                    <button className={viewMode === "daily" ? "active" : ""} onClick={() => setViewMode("daily")}>Theo Ngày</button>
+                    <button className={viewMode === "monthly" ? "active" : ""} onClick={() => setViewMode("monthly")}>Theo Tháng</button>
                 </div>
+                
+                <div className="date-inputs">
+                    {viewMode === "daily" ? (
+                        <input type="date" value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)} />
+                    ) : (
+                        <div className="range-picker">
+                            <input type="month" value={startMonth} onChange={(e) => setStartMonth(e.target.value)} />
+                            <span>➜</span>
+                            <input type="month" value={endMonth} onChange={(e) => setEndMonth(e.target.value)} />
+                        </div>
+                    )}
+                </div>
+            </div>
 
-                <div style={{ background: 'white', padding: '20px', borderRadius: '12px', boxShadow: '0 4px 15px rgba(0,0,0,0.05)' }}>
-                    <Bar data={chartData} />
+            <div className="chart-main-container">
+                <div className="chart-box">
+                    {viewMode === "daily" ? (
+                        <Bar data={chartData} options={{ responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }} />
+                    ) : (
+                        <Line data={chartData} options={{ responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }} />
+                    )}
                 </div>
-            </main>
+            </div>
 
             {showPreview && profitSummary && (
-                <div className="modal-overlay">
-                    <div className="modal-window">
-                        <div className="modal-header">
-                            <h2 style={{color: '#e91e63'}}>Xem trước báo cáo</h2>
-                            <button className="btn-x" onClick={() => setShowPreview(false)}>&times;</button>
+                <div className="preview-modal-overlay">
+                    <div className="preview-modal-content">
+                        <div className="modal-top">
+                            <h2>Xem trước báo cáo</h2>
+                            <button className="close-x" onClick={() => setShowPreview(false)}>&times;</button>
                         </div>
-                            <div className="modal-body">
-    {/* Sử dụng đúng tên biến đã map từ Backend */}
-    <p>📱 Doanh thu Online ({profitSummary.online_count || 0} đơn): 
-        <b> {profitSummary.online_money?.toLocaleString() || 0} đ</b>
-    </p>
-    <p>☕ Doanh thu Trực tiếp ({profitSummary.offline_count || 0} đơn): 
-        <b> {profitSummary.offline_money?.toLocaleString() || 0} đ</b>
-    </p>
-    <hr style={{ border: '0.5px solid #eee', margin: '15px 0' }} />
-    
-    <p style={{ color: '#e91e63', fontSize: '18px' }}>
-        💰 <b>Tổng doanh thu: {profitSummary.gross_revenue?.toLocaleString()} đ</b>
-    </p>
-    <p>📉 Chiết khấu (5%): <span style={{ color: 'red' }}>-{profitSummary.discount?.toLocaleString()} đ</span></p>
-    <p>🏛️ Thuế VAT (8%): <span style={{ color: 'red' }}>-{profitSummary.tax?.toLocaleString()} đ</span></p>
-    <p>🚚 Tiền nhập hàng: <span style={{ color: 'red' }}>-{profitSummary.total_import?.toLocaleString()} đ</span></p>
-    <hr />
-    <h3 style={{ color: '#2e7d32' }}>
-        💵 DOANH THU THỰC TẾ: {profitSummary.profit?.toLocaleString()} đ
-    </h3>
-</div>
-                        <div style={{marginTop: '20px', display: 'flex', gap: '10px'}}>
-                            <button onClick={() => setShowPreview(false)} style={{flex: 1, padding: '10px', borderRadius: '8px', border: '1px solid #ddd'}}>Hủy</button>
-                            <button onClick={exportToWord} style={{flex: 1, padding: '10px', borderRadius: '8px', background: '#e91e63', color: 'white', border: 'none'}}>Xuất file Word</button>
+                        <div className="modal-middle">
+                            <div className="summary-grid">
+                                <div className="sum-item"><span>Online:</span> <strong>{formatVND(profitSummary.online_money)}</strong></div>
+                                <div className="sum-item"><span>Trực tiếp:</span> <strong>{formatVND(profitSummary.offline_money)}</strong></div>
+                                <div className="sum-item total"><span>Tổng thu:</span> <strong>{formatVND(profitSummary.gross_revenue)}</strong></div>
+                                <div className="sum-item cost"><span>Chi phí:</span> <strong style={{color: '#f44336'}}>-{formatVND(profitSummary.total_import)}</strong></div>
+                            </div>
+                            <div className="profit-highlight">
+                                <span>LỢI NHUẬN DỰ KIẾN</span>
+                                <h2>{formatVND(profitSummary.profit)}</h2>
+                            </div>
+                        </div>
+                        <div className="modal-bottom">
+                            <button className="btn-cancel" onClick={() => setShowPreview(false)}>Đóng</button>
+                            <button className="btn-confirm-export" onClick={exportToWord}>Xác nhận & Tải file (.docx)</button>
                         </div>
                     </div>
                 </div>

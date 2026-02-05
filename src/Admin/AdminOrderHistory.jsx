@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { NavLink  } from "react-router-dom";
-import "./Css/ProductManagement.css"; 
 import "./Css/AdminOrderHistory.css"; 
 
 export default function AdminOrderHistory() {
@@ -22,209 +20,161 @@ export default function AdminOrderHistory() {
       if (startDate) url += `&startDate=${startDate}`;
       if (endDate) url += `&endDate=${endDate}`;
       const res = await fetch(url);
-      if (!res.ok) throw new Error("Lỗi tải đơn hàng");
       const data = await res.json();
       setOrders(Array.isArray(data) ? data : []);
     } catch (error) {
-      console.error("Lỗi tải đơn hàng:", error);
       setOrders([]);
     }
   };
 
   const handleViewDetails = async (order) => {
     setSelectedOrder(order);
-    setOrderDetails([]);
     try {
       const res = await fetch(`${API_BASE}/api/admin/orders/${order.order_id}/details`);
-      if (!res.ok) throw new Error("Lỗi tải chi tiết");
       const data = await res.json();
       setOrderDetails(Array.isArray(data) ? data : []);
     } catch (error) {
-      console.error("Lỗi fetch chi tiết:", error);
+      console.error("Lỗi tải chi tiết:", error);
     }
   };
 
-  // Tính tổng tiền tất cả đơn hiển thị
+  // --- LOGIC THỐNG KÊ ---
   const totalRevenue = orders.reduce((sum, o) => sum + (Number(o.total_amount) || 0), 0);
+  const onlineCount = orders.filter(o => o.order_type === "Online").length;
+  const localCount = orders.filter(o => o.order_type === "Trực tiếp").length;
 
   return (
-    <div className="sakura-admin-layout">
-      <aside className="sakura-sidebar">
-        <div className="sidebar-brand">SAKURA ADMIN</div>
-        <nav className="sidebar-nav">
-          <NavLink  to="/admin/products" className="nav-item">📦 Thực đơn</NavLink >
-                             <NavLink  to="/admin/accounts" className="nav-item">👥 Tài khoản</NavLink >
-                             <NavLink  to="/admin/bookings" className="nav-item">📅 Đặt bàn</NavLink >
-                             <NavLink  to="/admin/orders" className="nav-item">📊 Lịch sử đơn</NavLink >
-                             <NavLink  to="/admin/purchases" className="nav-item">🚚 Nhập kho</NavLink >
-                             <NavLink  to="/admin/revenue" className="nav-item tab-active" style={{background: '#fce4ec', color: '#e91e63'}}>💰 Doanh số</NavLink >
-                             <NavLink  to="/admin/news/add" className="nav-item active">📝 Đăng tin tức</NavLink >
-                             <NavLink  to="/Home" className="nav-item">🏠 Trang chủ</NavLink >
-        </nav>
-      </aside>
-
-      <main className="sakura-main">
-        <header className="main-header">
-          <div className="header-left">
-            <h1>Lịch sử đơn hàng</h1>
-            <p>Bấm vào dòng để xem chi tiết món ăn</p>
+    <div className="order-history-wrapper">
+      <header className="mgmt-header">
+        <div className="header-info">
+          <h1>📜 Lịch sử đơn hàng</h1>
+          <p>Dữ liệu đang hiển thị cho tháng {new Date().getMonth() + 1}</p>
+        </div>
+        
+        <div className="stats-summary-group">
+          <div className="stat-box online">
+            <span className="label">📱 Đơn Online</span>
+            <span className="value">{onlineCount}</span>
           </div>
-          <div className="header-right">
-            <h3 style={{ color: "#e91e63", fontSize: "24px" }}>
-              Tổng: {totalRevenue.toLocaleString("vi-VN")}đ
-            </h3>
+          <div className="stat-box local">
+            <span className="label">🏪 Tại chỗ</span>
+            <span className="value">{localCount}</span>
           </div>
-        </header>
-
-        <div className="filter-container-sakura">
-          <div className="filter-tabs">
-            {["All", "Online", "Trực tiếp"].map((t) => (
-              <button
-                key={t}
-                className={filterType === t ? "tab-active" : ""}
-                onClick={() => setFilterType(t)}
-              >
-                {t === "All" ? "Tất cả" : t === "Online" ? "Online" : "Tại chỗ"}
-              </button>
-            ))}
-          </div>
-
-          <div className="filter-dates">
-            <label>Từ: </label>
-            <input
-              type="date"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-            />
-            <label> Đến: </label>
-            <input
-              type="date"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-            />
+          <div className="revenue-badge">
+            <span className="label">Tổng doanh thu kỳ này:</span>
+            <span className="amount">{totalRevenue.toLocaleString("vi-VN")}đ</span>
           </div>
         </div>
+      </header>
 
-        <div className="category-group-card">
-          <table className="modern-table">
-            <thead>
-              <tr>
-                <th>MÃ</th>
-                <th>KHÁCH HÀNG</th>
-                <th>LOẠI</th>
-                <th>TỔNG TIỀN</th>
-                <th>TRẠNG THÁI</th>
+      <div className="filter-section-sakura">
+        <div className="tab-group">
+          {["All", "Online", "Trực tiếp"].map((t) => (
+            <button
+              key={t}
+              className={filterType === t ? "active" : ""}
+              onClick={() => setFilterType(t)}
+            >
+              {t === "All" ? "Tất cả" : t === "Online" ? "📱 Online" : "🏪 Tại chỗ"}
+            </button>
+          ))}
+        </div>
+
+        <div className="date-inputs">
+          <div className="input-field">
+            <label>Từ ngày</label>
+            <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+          </div>
+          <div className="input-field">
+            <label>Đến ngày</label>
+            <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
+          </div>
+        </div>
+      </div>
+
+      <div className="table-card-history">
+        <table className="sakura-history-table">
+          <thead>
+            <tr>
+              <th>MÃ ĐƠN</th>
+              <th>KHÁCH HÀNG</th>
+              <th>PHÂN LOẠI</th>
+              <th>THỜI GIAN</th>
+              <th>TỔNG TIỀN</th>
+              <th>TRẠNG THÁI</th>
+            </tr>
+          </thead>
+          <tbody>
+            {orders.map((order) => (
+              <tr key={order.order_id} onClick={() => handleViewDetails(order)} className="clickable-row">
+                <td className="id-col">#{order.order_id}</td>
+                <td>
+                  <div className="cust-name">{order.fullname || "Khách vãng lai"}</div>
+                  <small>{order.phone || "---"}</small>
+                </td>
+                <td>
+                  <span className={`type-tag ${order.order_type === "Online" ? "online" : "local"}`}>
+                    {order.order_type}
+                  </span>
+                </td>
+                <td>{new Date(order.created_at).toLocaleDateString('vi-VN')}</td>
+                <td className="amount-col">{Number(order.total_amount).toLocaleString("vi-VN")}đ</td>
+                <td>
+                  <span className={`status-pill ${order.status === "Đã hoàn thành" ? "done" : "other"}`}>
+                    {order.status}
+                  </span>
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {orders.length > 0 ? (
-                orders.map((order) => (
-                  <tr
-                    key={order.order_id}
-                    onClick={() => handleViewDetails(order)}
-                    style={{ cursor: "pointer" }}
-                  >
-                    <td>#{order.order_id}</td>
-                    <td>{order.full_name || "Khách vãng lai"}</td>
-                    <td>
-                      <span
-                        className={`badge ${order.order_type === "Online" ? "bg-online" : "bg-local"}`}
-                      >
-                        {order.order_type}
-                      </span>
-                    </td>
-                    <td>{Number(order.total_amount).toLocaleString("vi-VN")}đ</td>
-                    <td>
-                      <span
-                        className={`status-pill ${order.status === "Đã hoàn thành" ? "completed" : "pending"}`}
-                      >
-                        {order.status}
-                      </span>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="5" style={{ textAlign: "center" }}>
-                    Không có dữ liệu đơn hàng...
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
-        {/* Modal chi tiết đơn */}
-        {selectedOrder && (
-          <div className="modal-overlay" onClick={() => setSelectedOrder(null)}>
-            <div className="modal-window" onClick={(e) => e.stopPropagation()}>
-              <div className="modal-header">
-                <h2>Chi tiết đơn #{selectedOrder.order_id}</h2>
-                <button onClick={() => setSelectedOrder(null)}>✕</button>
-              </div>
-              <div style={{ padding: "20px" }}>
-                <div
-                  className="customer-info-section"
-                  style={{
-                    marginBottom: "20px",
-                    padding: "15px",
-                    background: "#f9f9f9",
-                    borderRadius: "8px",
-                  }}
-                >
-                  <h4 style={{ color: "#e91e63", marginBottom: "10px" }}>
-                    Thông tin đơn hàng
-                  </h4>
-                  <p>
-                    <strong>Khách hàng:</strong>{" "}
-                    {orderDetails[0]?.full_name || "Khách vãng lai"}
-                  </p>
-                  <p>
-                    <strong>Số điện thoại:</strong>{" "}
-                    {orderDetails[0]?.phone || "N/A"}
-                  </p>
-                  <p>
-                    <strong>Địa chỉ:</strong>{" "}
-                    {orderDetails[0]?.address || "Tại cửa hàng"}
-                  </p>
-                  <p>
-                    <strong>Ghi chú:</strong> {selectedOrder.note || "Không có"}
-                  </p>
+      {selectedOrder && (
+        <div className="sakura-modal-overlay" onClick={() => setSelectedOrder(null)}>
+          <div className="modal-detail-card" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Chi tiết đơn hàng #{selectedOrder.order_id}</h3>
+              <button className="close-x" onClick={() => setSelectedOrder(null)}>&times;</button>
+            </div>
+            <div className="modal-body">
+              <div className="order-summary-box">
+                <div className="info-item">
+                  <strong>Người nhận:</strong> <span>{selectedOrder.fullname}</span>
                 </div>
-
-                <table className="modern-table">
-                  <thead>
-                    <tr>
-                      <th>Món ăn</th>
-                      <th>SL</th>
-                      <th style={{ textAlign: "right" }}>Thành tiền</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {orderDetails.length > 0 ? (
-                      orderDetails.map((item, idx) => (
-                        <tr key={idx}>
-                          <td>{item.product_name}</td>
-                          <td>{item.quantity}</td>
-                          <td style={{ textAlign: "right" }}>
-                            {(item.quantity * item.price).toLocaleString("vi-VN")}đ
-                          </td>
-                        </tr>
-                      ))
-                    ) : (
-                      <tr>
-                        <td colSpan="3" style={{ textAlign: "center" }}>
-                          Không có chi tiết món...
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
+                <div className="info-item">
+                  <strong>Số điện thoại:</strong> <span>{selectedOrder.phone}</span>
+                </div>
+                <div className="info-item highlight-address">
+                  <strong>📍 Địa chỉ:</strong> <span>{selectedOrder.address || "Nhận tại cửa hàng"}</span>
+                </div>
+                <div className="info-item">
+                  <strong>Ghi chú:</strong> <span>{selectedOrder.note || "---"}</span>
+                </div>
               </div>
+
+              <table className="mini-product-table">
+                <thead>
+                  <tr>
+                    <th>Sản phẩm</th>
+                    <th>SL</th>
+                    <th className="txt-right">Thành tiền</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {orderDetails.map((item, idx) => (
+                    <tr key={idx}>
+                      <td>{item.product_name}</td>
+                      <td>x{item.quantity}</td>
+                      <td className="txt-right">{(item.quantity * item.price).toLocaleString("vi-VN")}đ</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
-        )}
-      </main>
+        </div>
+      )}
     </div>
   );
 }

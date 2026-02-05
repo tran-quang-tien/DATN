@@ -1,296 +1,315 @@
-/* --- 1. RESET & CẤU TRÚC CHUNG --- */
-html, body {
+/* ROOT VARIABLES - Màu sắc chủ đạo Sakura */
+:root {
+  --sakura-pink: #ffb7c5;
+  --sakura-dark-pink: #e91e63;
+  --japanese-black: #2c3e50;
+  --soft-cream: #fffaf0;
+  --gold-accent: #d4af37;
+}
+
+/* RESET & SCROLL */
+html,
+body {
   margin: 0;
   padding: 0;
   height: auto !important;
   overflow-y: auto !important;
-  background-color: #f9f5f0;
-  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  scroll-behavior: smooth;
+  overflow-x: hidden;
 }
 
 .home-container {
-  width: 100%;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--soft-cream);
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+  overflow-x: hidden;
 }
 
-/* --- 2. BANNER HERO (DÙNG THẺ IMG LÀM NỀN) --- */
+/* ================= HERO ================= */
 .home-hero-banner {
-  width: 100%;
-  height: 600px; /* Chiều cao cố định */
   position: relative;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  height: 85vh;
+  width: 100%;
 }
 
-/* Ép ảnh làm hình nền */
 .banner-bg-image {
-  position: absolute;
-  top: 0;
-  left: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover; /* Giữ tỷ lệ ảnh không bị méo */
-  z-index: 1;
-}
-
-/* Lớp phủ tối mờ */
-.hero-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.45); /* Độ tối mờ 45% */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 2;
-}
-
-/* Hộp nội dung chữ Glassmorphism */
-.hero-content-box {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  padding: 50px 80px;
-  border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  text-align: center;
-  color: white;
-  z-index: 3;
-}
-
-.hero-content-box h1 {
-  font-size: 3.5rem;
-  margin: 0;
-  text-transform: uppercase;
-  letter-spacing: 4px;
-  font-weight: 800;
-}
-
-.hero-line {
-  width: 80px;
-  height: 4px;
-  background-color: #d0021b; /* Màu đỏ Sakura */
-  margin: 20px auto;
-}
-
-.hero-content-box p {
-  font-size: 1.2rem;
-  margin-bottom: 30px;
-  font-weight: 300;
-  letter-spacing: 1px;
-}
-
-.hero-cta-btn {
-  background: transparent;
-  color: white;
-  border: 2px solid white;
-  padding: 14px 40px;
-  font-size: 1rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  border-radius: 4px;
-}
-
-.hero-cta-btn:hover {
-  background: white;
-  color: #d0021b;
-  transform: translateY(-3px);
-}
-
-/* --- 3. GRID DANH MỤC SẢN PHẨM --- */
-.categories-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 25px;
-  max-width: 1200px;
-  margin: -60px auto 60px; /* Đè lên banner một chút */
-  padding: 0 20px;
-  z-index: 10;
-  position: relative;
-}
-
-.category-item {
-  background: white;
-  border-radius: 15px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-  transition: 0.3s;
-  overflow: hidden;
-}
-
-.category-item:hover {
-  transform: translateY(-10px);
-}
-
-.category-item img {
-  width: 100%;
-  height: 220px;
   object-fit: cover;
 }
 
-.category-info {
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-content-box {
+  text-align: center;
+  color: white;
+  animation: fadeInUp 1s ease-out both;
+}
+
+.hero-content-box h1 {
+  font-size: 4rem;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  margin-bottom: 30px;
+  letter-spacing: 5px;
+}
+.hero-content-box p {
+  font-size: 1.1rem;
+  margin: 10px 0 30px; /* 👈 cách line & cách nút */
+  opacity: 0.95;
+}
+
+.hero-line {
+  width: 100px;
+  height: 4px;
+  background: var(--sakura-pink);
+  margin: 18px auto 22px;
+}
+
+.hero-content-box button {
+  padding: 15px 40px;
+  font-size: 1.2rem;
+  background: var(--sakura-dark-pink);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.3s;
+  box-shadow: 0 4px 15px rgba(233, 30, 99, 0.4);
+}
+
+.hero-content-box button:hover {
+  transform: scale(1.1);
+  background: #ff4081;
+}
+
+/* ================= FLASH SALE ================= */
+.flash-sale-home {
+  padding: 60px 10%;
+  background: white;
+}
+
+.section-title-area {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.sakura-title {
+  color: var(--sakura-dark-pink);
+  font-size: 2.5rem;
+}
+
+.sale-grid-4column {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 25px;
+}
+
+.sale-card-item {
+  background: white;
+  border-radius: 15px;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid #f0f0f0;
+  cursor: pointer;
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+
+.sale-card-item:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 18px 35px rgba(233, 30, 99, 0.25);
+}
+
+.sale-tag {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  background: #ff4d4f;
+  color: white;
+  padding: 5px 12px;
+  border-radius: 5px;
+  font-weight: bold;
+  animation: pulseSale 1.6s infinite;
+  z-index: 2;
+}
+
+.img-wrapper {
+  height: 200px;
+  overflow: hidden;
+}
+
+.img-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: 0.5s;
+}
+
+.sale-card-item:hover .img-wrapper img {
+  transform: scale(1.12);
+}
+
+.sale-detail {
   padding: 20px;
   text-align: center;
 }
 
-.category-info h4 {
-  color: #d0021b;
-  margin: 0 0 8px 0;
-  text-transform: uppercase;
+.sale-detail h4 {
+  margin-bottom: 10px;
+  font-size: 1.2rem;
+  color: var(--japanese-black);
 }
 
-/* --- 4. PHẦN GIỚI THIỆU CHI TIẾT --- */
+.price-old {
+  text-decoration: line-through;
+  color: #999;
+  margin-right: 10px;
+}
+
+.price-new {
+  color: #ff4d4f;
+  font-size: 1.3rem;
+  font-weight: bold;
+}
+
+.buy-now-mini {
+  margin-top: 10px;
+  padding: 8px 20px;
+  background: transparent;
+  border: 2px solid var(--sakura-pink);
+  color: var(--sakura-dark-pink);
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.buy-now-mini:hover {
+  background: var(--sakura-pink);
+  color: white;
+}
+
+/* ================= CATEGORY ================= */
+.categories-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  padding: 40px 10%;
+  background: var(--soft-cream);
+}
+
+.category-item {
+  text-align: center;
+  transition: transform 0.35s ease;
+}
+
+.category-item img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid white;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  margin-bottom: 10px;
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+.category-item:hover {
+  transform: translateY(-6px);
+}
+
+.category-item:hover img {
+  transform: scale(1.08);
+  box-shadow: 0 10px 25px rgba(233, 30, 99, 0.35);
+}
+
+.category-item h4 {
+  color: var(--japanese-black);
+  font-weight: 500;
+}
+
+/* ================= FEATURE ================= */
 .featured-row {
   display: flex;
-  max-width: 1200px;
-  margin: 50px auto 100px;
-  gap: 60px;
-  padding: 0 20px;
   align-items: center;
+  gap: 50px;
+  padding: 80px 10%;
+  background: white;
 }
 
-.featured-text { flex: 1; }
-.featured-text h2 { color: #d0021b; font-size: 2.5rem; margin-bottom: 25px; }
-.featured-text p { line-height: 1.8; color: #555; font-size: 1.1rem; }
+.featured-text {
+  flex: 1;
+}
+
+.featured-text h2 {
+  font-size: 2.5rem;
+  color: var(--japanese-black);
+}
+
+.featured-text p {
+  font-size: 1.1rem;
+  color: #555;
+}
 
 .read-more-btn {
-  background: #d0021b;
+  margin-top: 20px;
+  padding: 12px 30px;
+  background: var(--japanese-black);
   color: white;
   border: none;
-  padding: 15px 35px;
-  border-radius: 30px;
-  font-weight: bold;
+  border-radius: 5px;
   cursor: pointer;
-  margin-top: 20px;
+  transition: 0.3s;
 }
 
-.featured-promo { flex: 1; }
+.read-more-btn:hover {
+  background: var(--sakura-dark-pink);
+}
+
+.featured-promo {
+  flex: 1;
+}
+
 .featured-promo img {
   width: 100%;
   border-radius: 20px;
-  box-shadow: 20px 20px 0px #ffdae0; /* Viền trang trí lệch */
+  box-shadow: 20px 20px 0 var(--sakura-pink);
 }
 
-/* --- 5. HỆ THỐNG NÚT NỔI & CHAT --- */
-.dino-float-bubble, .main-contact-btn {
-  position: fixed;
-  right: 30px;
-  background: #d0021b;
-  color: white;
-  padding: 12px 25px;
-  border-radius: 30px;
-  cursor: pointer;
-  font-weight: bold;
-  box-shadow: 0 5px 15px rgba(208, 2, 27, 0.4);
-  z-index: 1000;
-  display: flex;
-  align-items: center;
-  gap: 10px;
+/* ================= ANIMATION ================= */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-.dino-float-bubble { bottom: 95px; background: #2d2d2d; } /* Nút game màu tối */
-.main-contact-btn { bottom: 30px; }
-
-/* Box Chat */
-.staff-chat-container {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  width: 380px;
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-  z-index: 2000;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
+@keyframes pulseSale {
+  0% { box-shadow: 0 0 0 rgba(255,77,79,0); }
+  50% { box-shadow: 0 0 15px rgba(255,77,79,0.8); }
+  100% { box-shadow: 0 0 0 rgba(255,77,79,0); }
 }
 
-.staff-chat-header {
-  background: #d0021b;
-  color: white;
-  padding: 15px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.chat-messages-area {
-  height: 400px;
-  padding: 15px;
-  overflow-y: auto;
-  background: #fdf8f8;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.message-bubble {
-  max-width: 80%;
-  padding: 10px 15px;
-  border-radius: 15px;
-  font-size: 0.9rem;
-}
-
-.user-msg { align-self: flex-end; background: #d0021b; color: white; }
-.bot-msg { align-self: flex-start; background: #eee; color: #333; }
-
-.chat-input-footer {
-  padding: 15px;
-  border-top: 1px solid #eee;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.chat-input-footer input {
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-}
-
-.footer-icons {
-  display: flex;
-  justify-content: space-between;
-}
-
-/* --- 6. GAME MODAL --- */
-.game-modal {
-  position: fixed;
-  top: 0; left: 0; width: 100%; height: 100%;
-  background: rgba(0,0,0,0.9);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-}
-
-.game-content {
-  background: white;
-  padding: 40px;
-  border-radius: 15px;
-  position: relative;
-}
-
-.close-btn {
-  position: absolute;
-  top: 10px; right: 15px;
-  font-size: 2rem;
-  cursor: pointer;
-  border: none; background: none;
-}
-
-/* Responsive */
+/* ================= RESPONSIVE ================= */
 @media (max-width: 768px) {
-  .categories-grid { grid-template-columns: repeat(2, 1fr); }
-  .featured-row { flex-direction: column; }
-  .hero-content-box { padding: 30px; }
-  .hero-content-box h1 { font-size: 2rem; }
+  .hero-content-box h1 {
+    font-size: 2.5rem;
+  }
+
+  .categories-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .featured-row {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .featured-promo img {
+    box-shadow: 10px 10px 0 var(--sakura-pink);
+  }
 }
